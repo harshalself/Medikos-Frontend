@@ -65,7 +65,7 @@ const InfectiousDiseasePrediction = () => {
 
   const samplePredictions: PredictionResult[] = [
     {
-      disease: "Most Likely Condition",
+      disease: "Common Cold (Viral Upper Respiratory Infection)",
       probability: 82,
       confidence: 'High',
       symptom_contributions: [
@@ -329,14 +329,11 @@ const InfectiousDiseasePrediction = () => {
                           <Brain className="w-8 h-8" />
                         </div>
                         <div>
-                          <CardTitle className="text-2xl font-bold text-red-700 mb-2">
-                            {prediction.disease}
+                          <CardTitle className="text-lg font-semibold text-gray-600 mb-1">
+                            Most Likely Condition
                           </CardTitle>
-                          <div className="flex items-center gap-2">
-                            <TrendingUp className="w-4 h-4 text-blue-600" />
-                            <span className="font-bold text-blue-600 text-lg">
-                              {prediction.probability}% Match
-                            </span>
+                          <div className="text-2xl font-bold text-red-700 mb-2">
+                            {prediction.disease}
                           </div>
                         </div>
                       </div>
@@ -351,136 +348,81 @@ const InfectiousDiseasePrediction = () => {
                   </CardHeader>
                   
                   <CardContent className="p-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                      {/* Left Column - Symptom Contribution Chart */}
-                      <div className="space-y-6">
-                        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-6 rounded-xl border border-blue-200">
-                          <h4 className="font-bold text-blue-800 mb-4 flex items-center gap-2 text-lg">
-                            <PieChart className="w-5 h-5" />
-                            Symptom Contribution Analysis
-                          </h4>
-                          
-                          {/* Pie Chart Visualization */}
-                          <div className="flex items-center justify-center mb-6">
-                            <div className="relative w-48 h-48">
-                              <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                                {prediction.symptom_contributions.map((contrib, idx) => {
-                                  const total = prediction.symptom_contributions.reduce((sum, c) => sum + c.contribution, 0);
-                                  const percentage = (contrib.contribution / total) * 100;
-                                  const startAngle = prediction.symptom_contributions
-                                    .slice(0, idx)
-                                    .reduce((sum, c) => sum + (c.contribution / total) * 360, 0);
-                                  const endAngle = startAngle + (percentage / 100) * 360;
-                                  
-                                  const startAngleRad = (startAngle * Math.PI) / 180;
-                                  const endAngleRad = (endAngle * Math.PI) / 180;
-                                  
-                                  const largeArcFlag = percentage > 50 ? 1 : 0;
-                                  
-                                  const x1 = 50 + 40 * Math.cos(startAngleRad);
-                                  const y1 = 50 + 40 * Math.sin(startAngleRad);
-                                  const x2 = 50 + 40 * Math.cos(endAngleRad);
-                                  const y2 = 50 + 40 * Math.sin(endAngleRad);
-                                  
-                                  return (
-                                    <path
-                                      key={idx}
-                                      d={`M 50 50 L ${x1} ${y1} A 40 40 0 ${largeArcFlag} 1 ${x2} ${y2} Z`}
-                                      fill={contrib.color}
-                                      className="hover:opacity-80 transition-opacity cursor-pointer"
-                                    />
-                                  );
-                                })}
-                                <circle cx="50" cy="50" r="15" fill="white" />
-                                <text x="50" y="55" textAnchor="middle" className="text-xs font-bold fill-gray-700">
-                                  {prediction.probability}%
-                                </text>
-                              </svg>
-                            </div>
-                          </div>
-
-                          {/* Legend */}
-                          <div className="space-y-3">
-                            {prediction.symptom_contributions.map((contrib, idx) => (
-                              <div key={idx} className="flex items-center justify-between p-3 bg-white rounded-lg border">
-                                <div className="flex items-center gap-3">
-                                  <div 
-                                    className="w-4 h-4 rounded-full"
-                                    style={{ backgroundColor: contrib.color }}
+                    {/* Symptom Contribution Chart - Full Width */}
+                    <div className="max-w-4xl mx-auto">
+                      <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-6 rounded-xl border border-blue-200">
+                        <h4 className="font-bold text-blue-800 mb-4 flex items-center gap-2 text-lg">
+                          <PieChart className="w-5 h-5" />
+                          Symptom Contribution Analysis
+                        </h4>
+                        
+                        {/* Pie Chart Visualization */}
+                        <div className="flex items-center justify-center mb-6">
+                          <div className="relative w-48 h-48">
+                            <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                              {prediction.symptom_contributions.map((contrib, idx) => {
+                                const total = prediction.symptom_contributions.reduce((sum, c) => sum + c.contribution, 0);
+                                const percentage = (contrib.contribution / total) * 100;
+                                const startAngle = prediction.symptom_contributions
+                                  .slice(0, idx)
+                                  .reduce((sum, c) => sum + (c.contribution / total) * 360, 0);
+                                const endAngle = startAngle + (percentage / 100) * 360;
+                                
+                                const startAngleRad = (startAngle * Math.PI) / 180;
+                                const endAngleRad = (endAngle * Math.PI) / 180;
+                                
+                                const largeArcFlag = percentage > 50 ? 1 : 0;
+                                
+                                const x1 = 50 + 40 * Math.cos(startAngleRad);
+                                const y1 = 50 + 40 * Math.sin(startAngleRad);
+                                const x2 = 50 + 40 * Math.cos(endAngleRad);
+                                const y2 = 50 + 40 * Math.sin(endAngleRad);
+                                
+                                return (
+                                  <path
+                                    key={idx}
+                                    d={`M 50 50 L ${x1} ${y1} A 40 40 0 ${largeArcFlag} 1 ${x2} ${y2} Z`}
+                                    fill={contrib.color}
+                                    className="hover:opacity-80 transition-opacity cursor-pointer"
                                   />
-                                  <span className="font-medium text-gray-700">{contrib.symptom}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <div className="w-20 bg-gray-200 rounded-full h-2">
-                                    <div 
-                                      className="h-2 rounded-full"
-                                      style={{ 
-                                        width: `${contrib.contribution}%`,
-                                        backgroundColor: contrib.color 
-                                      }}
-                                    />
-                                  </div>
-                                  <span className="font-bold text-gray-800 min-w-[3rem]">
-                                    {contrib.contribution}%
-                                  </span>
-                                </div>
+                                );
+                              })}
+                              <circle cx="50" cy="50" r="15" fill="white" />
+                              <text x="50" y="55" textAnchor="middle" className="text-xs font-bold fill-gray-700">
+                                {prediction.probability}%
+                              </text>
+                            </svg>
+                          </div>
+                        </div>
+
+                        {/* Legend */}
+                        <div className="space-y-3">
+                          {prediction.symptom_contributions.map((contrib, idx) => (
+                            <div key={idx} className="flex items-center justify-between p-3 bg-white rounded-lg border">
+                              <div className="flex items-center gap-3">
+                                <div 
+                                  className="w-4 h-4 rounded-full"
+                                  style={{ backgroundColor: contrib.color }}
+                                />
+                                <span className="font-medium text-gray-700">{contrib.symptom}</span>
                               </div>
-                            ))}
-                          </div>
+                              <div className="flex items-center gap-2">
+                                <div className="w-20 bg-gray-200 rounded-full h-2">
+                                  <div 
+                                    className="h-2 rounded-full"
+                                    style={{ 
+                                      width: `${contrib.contribution}%`,
+                                      backgroundColor: contrib.color 
+                                    }}
+                                  />
+                                </div>
+                                <span className="font-bold text-gray-800 min-w-[3rem]">
+                                  {contrib.contribution}%
+                                </span>
+                              </div>
+                            </div>
+                          ))}
                         </div>
-                      </div>
-
-                      {/* Right Column - Symptom Analysis */}
-                      <div className="space-y-6">
-                        <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200">
-                          <h4 className="font-bold text-green-800 mb-4 flex items-center gap-2 text-lg">
-                            <BarChart3 className="w-5 h-5" />
-                            Detailed Symptom Analysis
-                          </h4>
-                          
-                          {/* Primary Symptoms */}
-                          <div className="mb-6">
-                            <h5 className="font-semibold text-green-700 mb-3">Primary Symptoms</h5>
-                            <div className="space-y-2">
-                              {prediction.symptom_analysis.primary_symptoms.map((symptom, idx) => (
-                                <div key={idx} className="flex items-center gap-3 p-2 bg-white rounded-lg">
-                                  <div className="w-3 h-3 rounded-full bg-red-500" />
-                                  <span className="font-medium text-gray-700">{symptom}</span>
-                                  <Badge className="ml-auto bg-red-100 text-red-800">High Impact</Badge>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Secondary Symptoms */}
-                          <div className="mb-6">
-                            <h5 className="font-semibold text-green-700 mb-3">Secondary Symptoms</h5>
-                            <div className="space-y-2">
-                              {prediction.symptom_analysis.secondary_symptoms.map((symptom, idx) => (
-                                <div key={idx} className="flex items-center gap-3 p-2 bg-white rounded-lg">
-                                  <div className="w-3 h-3 rounded-full bg-orange-400" />
-                                  <span className="font-medium text-gray-700">{symptom}</span>
-                                  <Badge className="ml-auto bg-orange-100 text-orange-800">Moderate</Badge>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Contributing Factors */}
-                          <div>
-                            <h5 className="font-semibold text-green-700 mb-3">Contributing Factors</h5>
-                            <div className="space-y-2">
-                              {prediction.symptom_analysis.contributing_factors.map((factor, idx) => (
-                                <div key={idx} className="flex items-center gap-3 p-2 bg-white rounded-lg">
-                                  <Brain className="w-4 h-4 text-blue-500" />
-                                  <span className="text-sm text-gray-600">{factor}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-
-
                       </div>
                     </div>
 
