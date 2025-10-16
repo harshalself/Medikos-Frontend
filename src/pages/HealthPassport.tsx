@@ -629,27 +629,27 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
       {!loading && !error && !showCreateForm && healthPassport && (
         <>
           {/* Hero Section */}
-          <section className="py-16 bg-gradient-to-br from-purple-50 via-blue-50 to-cyan-50">
+          <section className="py-12 bg-gradient-to-br from-purple-50 via-blue-50 to-cyan-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex items-center justify-center mb-6">
-                <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center shadow-xl animate-float">
-                  <Shield className="w-10 h-10 text-white" />
+              <div className="flex items-center justify-center mb-4">
+                <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center shadow-xl animate-float">
+                  <Shield className="w-8 h-8 text-white" />
                 </div>
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4 animate-fade-in text-center">
+              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3 animate-fade-in text-center">
                 Smart Health Passport
               </h1>
-              <p className="text-xl text-muted-foreground mb-8 animate-slide-up text-center max-w-2xl mx-auto">
+              <p className="text-lg text-muted-foreground mb-6 animate-slide-up text-center max-w-2xl mx-auto">
                 Your comprehensive digital health identity with complete medical history, securely encrypted
               </p>
             </div>
           </section>
 
-          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-16">
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
           {/* Health Passport Card */}
-          <div className="lg:col-span-2">
-            <Card className="shadow-hover border-2 border-primary/20 animate-fade-in overflow-hidden">
+          <div className="xl:col-span-3">
+            <Card className="shadow-hover border-2 border-primary/20 animate-fade-in overflow-hidden h-full">
               <CardHeader className="bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600 text-white p-8 relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-slide-left"></div>
                 <div className="flex items-start justify-between">
@@ -662,21 +662,21 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
                   <Shield className="w-16 h-16 text-white/80" />
                 </div>
               </CardHeader>
-              <CardContent className="p-8">
+              <CardContent className="p-6 md:p-8">
                 {/* Personal Information */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                  <div>
-                    <h3 className="text-lg font-semibold text-foreground mb-4">Personal Information</h3>
-                    <div className="space-y-3">
-                      <div className="flex items-center space-x-3">
-                        <User className="w-5 h-5 text-primary" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-foreground mb-3 pb-2 border-b-2 border-primary/20">Personal Information</h3>
+                    <div className="space-y-4">
+                      <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 rounded-lg border border-blue-100 dark:border-blue-900">
+                        <User className="w-5 h-5 text-primary flex-shrink-0" />
                         <div>
                           <p className="font-medium">{user?.name}</p>
                           <p className="text-sm text-muted-foreground">{user?.email}</p>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-3">
-                        <MapPin className="w-5 h-5 text-primary" />
+                      <div className="flex items-start space-x-3 p-3 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 rounded-lg border border-purple-100 dark:border-purple-900">
+                        <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                         {!isEditing ? (
                           <p className="text-sm">
                             {healthPassport.address_line1}<br />
@@ -716,16 +716,16 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
                         )}
                       </div>
                       {user?.email && (
-                        <div className="flex items-center space-x-3">
-                          <Mail className="w-5 h-5 text-primary" />
+                        <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 rounded-lg border border-green-100 dark:border-green-900">
+                          <Mail className="w-5 h-5 text-primary flex-shrink-0" />
                           <p className="text-sm">{user.email}</p>
                         </div>
                       )}
                     </div>
                   </div>
 
-                  <div>
-                    <h3 className="text-lg font-semibold text-foreground mb-4">Medical Profile</h3>
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-foreground mb-3 pb-2 border-b-2 border-primary/20">Medical Profile</h3>
                     <div className="space-y-3">
                       {!isEditing ? (
                         <>
@@ -831,9 +831,9 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
                 </div>
 
                 {/* Health Information */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                  <div>
-                    <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center pb-2 border-b-2 border-primary/20">
                       <Heart className="w-5 h-5 text-primary mr-2" />
                       Basic Health Information
                     </h3>
@@ -841,18 +841,21 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
                       {!isEditing ? (
                         <>
                           {healthPassport.chronic_conditions && (
-                            <div className="p-4 border rounded-lg">
-                              <h4 className="font-medium text-sm text-muted-foreground mb-2">CHRONIC CONDITIONS</h4>
+                            <div className="p-4 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-950/20 dark:to-red-950/20 border border-orange-200 dark:border-orange-800 rounded-lg">
+                              <h4 className="font-medium text-sm text-muted-foreground mb-2 flex items-center">
+                                <Clock className="w-4 h-4 mr-1" />
+                                CHRONIC CONDITIONS
+                              </h4>
                               <p className="text-sm">{healthPassport.chronic_conditions}</p>
                             </div>
                           )}
                           {healthPassport.allergies && (
-                            <div className="p-4 border border-destructive/20 rounded-lg bg-destructive/5">
+                            <div className="p-4 border-2 border-destructive/30 rounded-lg bg-gradient-to-br from-red-50 to-rose-50 dark:from-red-950/20 dark:to-rose-950/20">
                               <h4 className="font-medium text-sm text-muted-foreground mb-2 flex items-center">
                                 <AlertTriangle className="w-4 h-4 text-destructive mr-1" />
                                 ALLERGIES
                               </h4>
-                              <p className="text-sm text-destructive">{healthPassport.allergies}</p>
+                              <p className="text-sm text-destructive font-medium">{healthPassport.allergies}</p>
                             </div>
                           )}
                         </>
@@ -893,8 +896,8 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
                     </div>
                   </div>
 
-                  <div>
-                    <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center">
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center pb-2 border-b-2 border-primary/20">
                       <Activity className="w-5 h-5 text-primary mr-2" />
                       Vital Signs & Lifestyle
                     </h3>
@@ -902,34 +905,34 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
                       {!isEditing ? (
                         <>
                           <div className="grid grid-cols-2 gap-3">
-                            <div className="p-3 bg-primary/5 rounded-lg text-center">
-                              <div className="flex items-center justify-center mb-1">
-                                <Activity className="w-4 h-4 text-primary" />
+                            <div className="p-4 bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-950/20 dark:to-blue-950/20 rounded-lg border border-cyan-200 dark:border-cyan-800 text-center">
+                              <div className="flex items-center justify-center mb-2">
+                                <Activity className="w-5 h-5 text-primary" />
                               </div>
-                              <p className="text-xs text-muted-foreground">Blood Pressure</p>
-                              <p className="font-semibold">{healthPassport.blood_pressure}</p>
+                              <p className="text-xs text-muted-foreground mb-1">Blood Pressure</p>
+                              <p className="font-semibold text-lg">{healthPassport.blood_pressure}</p>
                             </div>
-                            <div className="p-3 bg-primary/5 rounded-lg text-center">
-                              <div className="flex items-center justify-center mb-1">
-                                <Heart className="w-4 h-4 text-primary" />
+                            <div className="p-4 bg-gradient-to-br from-rose-50 to-pink-50 dark:from-rose-950/20 dark:to-pink-950/20 rounded-lg border border-rose-200 dark:border-rose-800 text-center">
+                              <div className="flex items-center justify-center mb-2">
+                                <Heart className="w-5 h-5 text-primary" />
                               </div>
-                              <p className="text-xs text-muted-foreground">Heart Rate</p>
-                              <p className="font-semibold">{healthPassport.heart_rate} bpm</p>
+                              <p className="text-xs text-muted-foreground mb-1">Heart Rate</p>
+                              <p className="font-semibold text-lg">{healthPassport.heart_rate} bpm</p>
                             </div>
                           </div>
 
                           <div className="space-y-3">
-                            <div className="flex justify-between p-3 bg-muted/50 rounded-lg">
-                              <span className="text-sm">Smoking Status</span>
-                              <Badge variant="outline">{healthPassport.smoking_status}</Badge>
+                            <div className="flex justify-between items-center p-3 bg-gradient-to-r from-slate-50 to-gray-50 dark:from-slate-950/20 dark:to-gray-950/20 rounded-lg border border-slate-200 dark:border-slate-800">
+                              <span className="text-sm font-medium">Smoking Status</span>
+                              <Badge variant="outline" className="font-medium">{healthPassport.smoking_status}</Badge>
                             </div>
-                            <div className="flex justify-between p-3 bg-muted/50 rounded-lg">
-                              <span className="text-sm">Alcohol Consumption</span>
-                              <Badge variant="outline">{healthPassport.alcohol_consumption}</Badge>
+                            <div className="flex justify-between items-center p-3 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950/20 dark:to-yellow-950/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                              <span className="text-sm font-medium">Alcohol Consumption</span>
+                              <Badge variant="outline" className="font-medium">{healthPassport.alcohol_consumption}</Badge>
                             </div>
-                            <div className="flex justify-between p-3 bg-muted/50 rounded-lg">
-                              <span className="text-sm">Exercise Frequency</span>
-                              <Badge variant="outline">{healthPassport.exercise_frequency}</Badge>
+                            <div className="flex justify-between items-center p-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 rounded-lg border border-green-200 dark:border-green-800">
+                              <span className="text-sm font-medium">Exercise Frequency</span>
+                              <Badge variant="outline" className="font-medium">{healthPassport.exercise_frequency}</Badge>
                             </div>
                           </div>
                         </>
@@ -1013,26 +1016,62 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
           {/* Side Panel */}
           <div className="space-y-6">
             {/* Current Medications */}
-            <Card className="shadow-card animate-slide-up">
-              <CardHeader>
-                <CardTitle className="flex items-center">
+            <Card className="shadow-card animate-slide-up h-fit sticky top-6">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center text-lg">
                   <Heart className="w-5 h-5 text-primary mr-2" />
                   Current Medications
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {healthPassport.current_medications ? (
-                  <p className="text-sm leading-relaxed">{healthPassport.current_medications}</p>
+                  <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <p className="text-sm leading-relaxed">{healthPassport.current_medications}</p>
+                  </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground">No current medications</p>
+                  <p className="text-sm text-muted-foreground italic">No current medications</p>
                 )}
               </CardContent>
             </Card>
 
+            {/* Past Surgeries */}
+            {healthPassport.past_surgeries && (
+              <Card className="shadow-card animate-slide-up h-fit" style={{ animationDelay: '200ms' }}>
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center text-lg">
+                    <Activity className="w-5 h-5 text-primary mr-2" />
+                    Past Surgeries
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="bg-purple-50 dark:bg-purple-950/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
+                    <p className="text-sm leading-relaxed">{healthPassport.past_surgeries}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Family History */}
+            {healthPassport.family_history && (
+              <Card className="shadow-card animate-slide-up h-fit" style={{ animationDelay: '300ms' }}>
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center text-lg">
+                    <User className="w-5 h-5 text-primary mr-2" />
+                    Family History
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="bg-amber-50 dark:bg-amber-950/20 p-4 rounded-lg border border-amber-200 dark:border-amber-800">
+                    <p className="text-sm leading-relaxed">{healthPassport.family_history}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Quick Actions */}
-            <Card className="shadow-card animate-slide-up" style={{ animationDelay: '400ms' }}>
-              <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
+            <Card className="shadow-card animate-slide-up h-fit" style={{ animationDelay: '400ms' }}>
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg">Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {!isEditing ? (
