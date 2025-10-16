@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Heart, Shield, Users, Stethoscope, User } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Heart, Shield, Users, Stethoscope, User, Loader2, AlertCircle } from "lucide-react";
 import { useAuth, UserRole } from "@/contexts/AuthContext";
 import medicalBg from "@/assets/medical-bg.jpg";
 
@@ -17,8 +18,9 @@ const Login = () => {
   const [fullName, setFullName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [selectedRole, setSelectedRole] = useState<UserRole>("patient");
+  const [localError, setLocalError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isLoading, error, clearError } = useAuth();
 
   // Check URL parameters to set initial mode
   useEffect(() => {
@@ -30,38 +32,56 @@ const Login = () => {
     }
   }, [searchParams]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Clear errors when switching modes
+  useEffect(() => {
+    setLocalError(null);
+    clearError();
+  }, [isLogin, clearError]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLocalError(null);
+    clearError();
     
     // Validation for signup
     if (!isLogin) {
       if (password !== confirmPassword) {
-        alert("Passwords don't match!");
+        setLocalError("Passwords don't match!");
         return;
       }
       if (password.length < 8) {
-        alert("Password must be at least 8 characters long!");
+        setLocalError("Password must be at least 8 characters long!");
         return;
       }
       if (!fullName.trim()) {
-        alert("Please enter your full name!");
+        setLocalError("Please enter your full name!");
         return;
       }
       if (!phoneNumber.trim()) {
-        alert("Please enter your phone number!");
+        setLocalError("Please enter your phone number!");
         return;
       }
+      
+      // Signup functionality will be implemented when backend docs are provided
+      setLocalError("Signup functionality will be available soon. Please use login for now.");
+      return;
     }
     
-    login(email, password, selectedRole);
-    
-    // Navigate based on role
-    if (selectedRole === "doctor") {
-      navigate("/doctor-dashboard");
-    } else if (selectedRole === "admin") {
-      navigate("/admin-dashboard");
-    } else {
-      navigate("/dashboard");
+    // Login
+    try {
+      await login(email, password, selectedRole);
+      
+      // Navigate based on role
+      if (selectedRole === "doctor") {
+        navigate("/doctor-dashboard");
+      } else if (selectedRole === "admin") {
+        navigate("/admin-dashboard");
+      } else {
+        navigate("/dashboard");
+      }
+    } catch (err) {
+      // Error is handled by AuthContext
+      console.error("Login error:", err);
     }
   };
 
@@ -106,6 +126,16 @@ const Login = () => {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Error Alert */}
+                {(error || localError) && (
+                  <Alert variant="destructive" className="animate-fade-in">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      {localError || error}
+                    </AlertDescription>
+                  </Alert>
+                )}
+                
                 <div className="space-y-2">
                   <Label htmlFor="role" className="text-sm font-semibold">{isLogin ? "Login As" : "Register As"}</Label>
                   <div className="grid grid-cols-3 gap-3">
@@ -230,8 +260,16 @@ const Login = () => {
                 <Button 
                   type="submit" 
                   className="w-full bg-gradient-to-r from-primary to-accent hover:shadow-hover transition-all duration-300 hover-scale text-base py-6"
+                  disabled={isLoading}
                 >
-                  {isLogin ? "Sign In to Your Account" : "Create Your Account"}
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      {isLogin ? "Signing In..." : "Creating Account..."}
+                    </>
+                  ) : (
+                    isLogin ? "Sign In to Your Account" : "Create Your Account"
+                  )}
                 </Button>
                 
                 <div className="text-center">
