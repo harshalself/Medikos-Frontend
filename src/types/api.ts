@@ -355,3 +355,47 @@ export interface HealthPassport {
   created_at: string;
   updated_at: string;
 }
+
+// ============================================
+// Generic Medicine Suggester Types
+// ============================================
+
+export interface MedicineAlternative {
+  id?: number;
+  generic_name: string;
+  drug_code?: string;
+  pack_size?: string;
+  source: string;
+  match_type: 'EXACT' | 'FUZZY';
+  confidence_score: number;
+  government_verified: boolean;
+  nlem_medicine?: string;
+  user_selected: boolean;
+  selected_at?: string;
+}
+
+export interface MedicineSuggestionRequest {
+  branded_medicine_name: string;
+  search_type: 'SUGGESTION';
+  user_agent?: string;
+  session_id?: string;
+}
+
+export interface MedicineSuggestionResponse {
+  status: string;
+  message?: string;
+  input?: {
+    branded_name: string;
+    composition?: string;
+    strength?: string;
+    dosage_form?: string;
+  };
+  alternatives: MedicineAlternative[];
+  metadata: {
+    total_found: number;
+    search_method: string;
+    process_time_seconds: number;
+    response_time_ms: number;
+    cached: boolean;
+  };
+}

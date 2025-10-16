@@ -73,6 +73,9 @@ class APIClient {
       ? endpoint 
       : `${API_BASE_URL}${endpoint}`;
     
+    console.log('API Request URL:', url);
+    console.log('API_BASE_URL:', API_BASE_URL);
+    console.log('Endpoint:', endpoint);
     // Merge headers
     const headers = {
       ...getCommonHeaders(includeAuth),

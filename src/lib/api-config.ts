@@ -40,6 +40,9 @@ export const API_ENDPOINTS = {
     address: '/api/health-passport/address',
     emergency: '/api/health-passport/emergency',
   },
+  medicineSuggester: {
+    suggestAlternatives: '/api/medicine-suggester/suggest-alternatives',
+  },
 } as const;
 
 /**
