@@ -55,7 +55,8 @@ const MediVault = () => {
   // Fetch documents on component mount
   useEffect(() => {
     fetchDocuments();
-  }, [fetchDocuments]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Helper function to format file size
   const formatFileSize = (bytes: number) => {

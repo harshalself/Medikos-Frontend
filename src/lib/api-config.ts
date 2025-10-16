@@ -53,6 +53,17 @@ export const API_ENDPOINTS = {
   remediesSuggestion: {
     suggest: '/api/remedies-suggestion/suggest',
   },
+  healthDiary: {
+    base: '/api/health-diary',
+    create: '/api/health-diary',
+    list: '/api/health-diary',
+    detail: (entryId: string) => `/api/health-diary/${entryId}`,
+    update: (entryId: string) => `/api/health-diary/${entryId}`,
+    delete: (entryId: string) => `/api/health-diary/${entryId}`,
+    byDate: (date: string) => `/api/health-diary/by-date/${date}`,
+    dateRange: '/api/health-diary/date-range/',
+    stats: '/api/health-diary/stats/count',
+  },
 } as const;
 
 /**
