@@ -1,12 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { useAuth } from "@/contexts/AuthContext";
+import api, { APIError } from "@/lib/api";
+import { API_ENDPOINTS } from "@/lib/api-config";
 import { 
   User, 
   Edit,
@@ -16,34 +21,115 @@ import {
   Mail,
   MapPin,
   Shield,
-  FileText
+  FileText,
+  Loader2
 } from "lucide-react";
 
 const Profile = () => {
   const { toast } = useToast();
+  const { user, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [profile, setProfile] = useState({
-    name: "Sankalp Sharma",
-    email: "sankalp@example.com",
-    phone: "+91 98765 43210",
-    address: "Mumbai, Maharashtra, India",
-    emergencyContact: "Priya Sharma - +91 98765 43211",
-    bio: "Software engineer with interest in natural health and wellness practices.",
-    dateOfBirth: "1990-05-15",
-    bloodType: "O+",
-    height: "175 cm",
-    weight: "70 kg"
+    id: "",
+    email: "",
+    full_name: "",
+    phone: "",
+    date_of_birth: "",
+    gender: "",
+    avatar_url: "",
+    created_at: "",
+    updated_at: ""
   });
 
   const [isEditing, setIsEditing] = useState(false);
 
+  // Check authentication
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+  }, [isAuthenticated, navigate]);
 
+  // Fetch profile data on component mount
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        setLoading(true);
+        const response = await api.get<{
+          id: string;
+          email: string;
+          full_name?: string;
+          phone?: string;
+          date_of_birth?: string;
+          gender?: string;
+          avatar_url?: string;
+          created_at: string;
+          updated_at: string;
+        }>(API_ENDPOINTS.auth.profile);
 
-  const handleSaveProfile = () => {
-    setIsEditing(false);
-    toast({
-      title: "Profile Updated",
-      description: "Your profile information has been saved successfully.",
-    });
+        setProfile({
+          id: response.id || "",
+          email: response.email || "",
+          full_name: response.full_name || "",
+          phone: response.phone || "",
+          date_of_birth: response.date_of_birth || "",
+          gender: response.gender || "",
+          avatar_url: response.avatar_url || "",
+          created_at: response.created_at || "",
+          updated_at: response.updated_at || ""
+        });
+      } catch (error) {
+        console.error("Failed to fetch profile:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load profile data. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [toast, isAuthenticated]);
+
+  const handleSaveProfile = async () => {
+    try {
+      setSaving(true);
+      
+      // Only send fields that the backend supports
+      const updateData = {
+        full_name: profile.full_name,
+        phone: profile.phone,
+        date_of_birth: profile.date_of_birth,
+        gender: profile.gender,
+        avatar_url: profile.avatar_url,
+      };
+
+      await api.put(API_ENDPOINTS.auth.profile, updateData);
+      
+      setIsEditing(false);
+      toast({
+        title: "Profile Updated",
+        description: "Your profile information has been saved successfully.",
+      });
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+      const errorMessage = error instanceof APIError 
+        ? error.data?.detail || error.data?.message || "Failed to update profile"
+        : "Failed to update profile";
+      
+      toast({
+        title: "Update Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handlePhotoUpload = () => {
@@ -55,6 +141,7 @@ const Profile = () => {
 
   return (
     <AppLayout>
+      {isAuthenticated ? (
       <div className="min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50 p-8">
         <div className="max-w-4xl mx-auto">
           {/* Hero Section */}
@@ -66,7 +153,13 @@ const Profile = () => {
             <p className="text-xl text-gray-600">Manage your personal information and account settings</p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-teal-600" />
+              <span className="ml-2 text-gray-600">Loading profile...</span>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Profile Information Card */}
             <Card className="lg:col-span-2 shadow-xl">
               <CardHeader>
@@ -83,9 +176,15 @@ const Profile = () => {
                   <Button
                     variant="outline"
                     onClick={() => isEditing ? handleSaveProfile() : setIsEditing(true)}
+                    disabled={saving}
                     className="hover:shadow-lg transition-all duration-300"
                   >
-                    {isEditing ? (
+                    {saving ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Saving...
+                      </>
+                    ) : isEditing ? (
                       <>
                         <Save className="w-4 h-4 mr-2" />
                         Save
@@ -114,7 +213,7 @@ const Profile = () => {
                     </button>
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold">{profile.name}</h3>
+                    <h3 className="text-xl font-semibold">{profile.full_name || user?.name || 'User'}</h3>
                     <p className="text-gray-600">Profile Photo</p>
                     <Badge variant="outline" className="mt-2">Verified User</Badge>
                   </div>
@@ -128,8 +227,8 @@ const Profile = () => {
                       <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <Input
                         id="name"
-                        value={profile.name}
-                        onChange={(e) => setProfile({...profile, name: e.target.value})}
+                        value={profile.full_name}
+                        onChange={(e) => setProfile({...profile, full_name: e.target.value})}
                         disabled={!isEditing}
                         className="pl-10 focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                       />
@@ -170,63 +269,31 @@ const Profile = () => {
                     <Input
                       id="dob"
                       type="date"
-                      value={profile.dateOfBirth}
-                      onChange={(e) => setProfile({...profile, dateOfBirth: e.target.value})}
+                      value={profile.date_of_birth}
+                      onChange={(e) => setProfile({...profile, date_of_birth: e.target.value})}
                       disabled={!isEditing}
                       className="focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="emergency">Emergency Contact</Label>
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                      <Input
-                        id="emergency"
-                        value={profile.emergencyContact}
-                        onChange={(e) => setProfile({...profile, emergencyContact: e.target.value})}
-                        disabled={!isEditing}
-                        className="pl-10 focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="bloodType">Blood Type</Label>
-                    <Input
-                      id="bloodType"
-                      value={profile.bloodType}
-                      onChange={(e) => setProfile({...profile, bloodType: e.target.value})}
+                    <Label htmlFor="gender">Gender</Label>
+                    <Select
+                      value={profile.gender}
+                      onValueChange={(value) => setProfile({...profile, gender: value})}
                       disabled={!isEditing}
-                      className="focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    />
+                    >
+                      <SelectTrigger className="focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                        <SelectValue placeholder="Select gender" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="male">Male</SelectItem>
+                        <SelectItem value="female">Female</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                        <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="address">Address</Label>
-                  <div className="relative">
-                    <MapPin className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                    <Textarea
-                      id="address"
-                      value={profile.address}
-                      onChange={(e) => setProfile({...profile, address: e.target.value})}
-                      disabled={!isEditing}
-                      className="pl-10 min-h-[80px] focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="bio">Bio</Label>
-                  <Textarea
-                    id="bio"
-                    placeholder="Tell us about yourself..."
-                    value={profile.bio}
-                    onChange={(e) => setProfile({...profile, bio: e.target.value})}
-                    disabled={!isEditing}
-                    className="min-h-[100px] focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                  />
                 </div>
               </CardContent>
             </Card>
@@ -273,8 +340,23 @@ const Profile = () => {
               </CardContent>
             </Card>
           </div>
+          )}
         </div>
       </div>
+      ) : (
+        <div className="min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50 p-8 flex items-center justify-center">
+          <div className="text-center">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-red-500 to-pink-600 mb-6 shadow-xl">
+              <Shield className="w-10 h-10 text-white" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Authentication Required</h2>
+            <p className="text-gray-600 mb-6">Please log in to access your profile.</p>
+            <Button onClick={() => navigate('/login')} className="bg-teal-600 hover:bg-teal-700">
+              Go to Login
+            </Button>
+          </div>
+        </div>
+      )}
     </AppLayout>
   );
 };
