@@ -43,6 +43,9 @@ export const API_ENDPOINTS = {
   medicineSuggester: {
     suggestAlternatives: '/api/medicine-suggester/suggest-alternatives',
   },
+  remediesSuggestion: {
+    suggest: '/api/remedies-suggestion/suggest',
+  },
 } as const;
 
 /**
