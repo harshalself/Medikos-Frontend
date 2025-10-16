@@ -30,6 +30,16 @@ export const API_ENDPOINTS = {
     profile: '/api/auth/profile',
     logout: '/api/auth/logout',
   },
+  healthPassport: {
+    base: '/api/health-passport',
+    exists: '/api/health-passport/exists',
+    basic: '/api/health-passport/basic',
+    medical: '/api/health-passport/medical',
+    vitals: '/api/health-passport/vitals',
+    lifestyle: '/api/health-passport/lifestyle',
+    address: '/api/health-passport/address',
+    emergency: '/api/health-passport/emergency',
+  },
 } as const;
 
 /**

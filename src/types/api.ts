@@ -319,3 +319,39 @@ export interface AnalyticsData {
     appointmentCount: number;
   }[];
 }
+
+// ============================================
+// Health Passport Types
+// ============================================
+
+export interface HealthPassport {
+  id: string;
+  user_id: string;
+  blood_group?: string;
+  allergies?: string;
+  chronic_conditions?: string;
+  current_medications?: string;
+  past_surgeries?: string;
+  family_history?: string;
+  smoking_status?: string;
+  alcohol_consumption?: string;
+  exercise_frequency?: string;
+  diet_type?: string;
+  height_cm?: number;
+  weight_kg?: number;
+  blood_pressure?: string;
+  heart_rate?: number;
+  vaccination_status?: string;
+  address_line1?: string;
+  address_line2?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  postal_code?: string;
+  emergency_contact_name?: string;
+  emergency_contact_phone?: string;
+  emergency_contact_relation?: string;
+  bmi?: number;
+  created_at: string;
+  updated_at: string;
+}
