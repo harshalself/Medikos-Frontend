@@ -357,22 +357,6 @@ export const Sidebar = ({ userRole, onLogout, isCollapsed, onToggle }: SidebarPr
                       "font-semibold text-sm block transition-all duration-300",
                       isActive ? "text-white" : "text-gray-800"
                     )}>{link.label}</span>
-                    <span className={cn(
-                      "text-xs transition-all duration-300",
-                      isActive ? "text-white/70" : "text-gray-500"
-                    )}>
-                      {link.path === "/passport" && "Digital Health Identity"}
-                      {link.path === "/generic-medicine" && "Find Medicine Alternatives"}
-                      {link.path === "/disease-prediction" && "AI Disease Analysis"}
-                      {link.path === "/health-diary" && "Daily Health Tracking"}
-                      {link.path === "/medivault" && "Medical Records Storage"}
-                      {link.path === "/remedies" && "Natural Health Solutions"}
-                      {link.path === "/doctor/patients" && "Patient Management & Access"}
-                      {link.path === "/doctor/diagnosis" && "AI-Powered Diagnostic Support"}
-                      {link.path === "/doctor/consultations" && "Communication Hub"}
-                      {link.path === "/doctor/analytics" && "Patient Health Analytics"}
-                      {link.path === "/chatbot" && "Medical AI Assistant"}
-                    </span>
                   </div>
                 </Link>
               );

@@ -1401,8 +1401,8 @@ const Landing = () => {
                     </div>
                     <div>
                       <h3 className="font-semibold mb-1">Call Us</h3>
-                      <p className="text-muted-foreground">+1 (555) 123-4567</p>
-                      <p className="text-muted-foreground">Mon-Fri: 9AM - 6PM EST</p>
+                      <p className="text-muted-foreground">+91 (0253) 223-4567</p>
+                      <p className="text-muted-foreground">Mon-Fri: 9AM - 6PM IST</p>
                     </div>
                   </div>
                 </CardContent>
@@ -1417,7 +1417,7 @@ const Landing = () => {
                     <div>
                       <h3 className="font-semibold mb-1">Visit Us</h3>
                       <p className="text-muted-foreground">123 Healthcare Ave</p>
-                      <p className="text-muted-foreground">Medical District, CA 90210</p>
+                      <p className="text-muted-foreground">Medical District, Nashik, Maharashtra – 422002</p>
                     </div>
                   </div>
                 </CardContent>
@@ -1509,9 +1509,8 @@ const Landing = () => {
               © 2024 Medikos Healthcare Platform. All rights reserved.
             </p>
             <div className="flex items-center space-x-4">
-              <span className="text-muted-foreground text-sm">Made with</span>
-              <Heart className="w-4 h-4 text-red-500 fill-red-500" />
-              <span className="text-muted-foreground text-sm">for better healthcare</span>
+             
+              
             </div>
           </div>
         </div>

@@ -24,27 +24,14 @@ const Remedies = () => {
 
 
   const naturalRemedies = [
-    {
-      type: "Herbal",
-      name: "Triphala",
-      description: "500 mg, twice daily after meals",
-      usage: "Mix with warm water, consume on empty stomach",
-      benefits: ["Digestive health", "Detoxification", "Immunity boost"]
-    },
-    {
-      type: "Yoga/Lifestyle",
-      name: "Pawanmuktasana (Wind-Relieving Pose)",
-      description: "15 minutes daily, morning or evening",
-      usage: "Hold for 30 seconds, repeat 5-8 times",
-      benefits: ["Improves digestion", "Relieves gas", "Strengthens core"]
-    },
-    {
-      type: "Herbal",
-      name: "Ashwagandha",
-      description: "300-500 mg, once daily before bedtime",
-      usage: "Mix with warm milk or water",
-      benefits: ["Stress relief", "Better sleep", "Energy balance"]
-    }
+    "Cool compress on affected area",
+    "Apply aloe vera gel",
+    "Avoid direct sun exposure",
+    "Stay hydrated with plenty of water",
+    "Use turmeric paste for inflammation",
+    "Take honey with warm water",
+    "Practice deep breathing exercises",
+    "Get adequate rest and sleep"
   ];
 
   const dietRecommendations = {
@@ -162,7 +149,7 @@ const Remedies = () => {
               </TabsTrigger>
               <TabsTrigger value="diet" className="space-x-2">
                 <Droplets className="w-4 h-4" />
-                <span>Diet Plan</span>
+                <span>Diet Suggestions</span>
               </TabsTrigger>
             </TabsList>
 
@@ -173,51 +160,30 @@ const Remedies = () => {
                   <span>Natural Remedies</span>
                 </h2>
                 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {naturalRemedies.map((remedy, index) => (
-                    <Card 
-                      key={index}
-                      className="card-hover shadow-card border-l-4 border-l-success animate-fade-in"
-                      style={{ animationDelay: `${index * 100}ms` }}
-                    >
-                      <CardHeader>
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <CardTitle className="text-lg flex items-center space-x-2">
-                              <span>{remedy.name}</span>
-                            </CardTitle>
-                            <CardDescription className="mt-2">{remedy.description}</CardDescription>
-                          </div>
-                          <Badge className="bg-success/10 text-success border-success">
-                            {remedy.type}
-                          </Badge>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <div className="p-3 bg-primary-soft rounded-lg">
-                          <h4 className="font-medium text-sm mb-1 flex items-center space-x-2">
-                            <Sun className="w-4 h-4 text-primary" />
-                            <span>How to Use:</span>
-                          </h4>
-                          <p className="text-sm text-muted-foreground">{remedy.usage}</p>
-                        </div>
-                        <div>
-                          <h4 className="font-medium text-sm mb-2">Key Benefits:</h4>
-                          <div className="flex flex-wrap gap-2">
-                            {remedy.benefits.map((benefit) => (
-                              <Badge key={benefit} variant="outline" className="text-xs">
-                                <Check className="w-3 h-3 mr-1" />
-                                {benefit}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-
-
+                {/* Natural Remedies Card */}
+                <Card className="card-hover shadow-card border-t-4 border-t-success">
+                  <CardHeader>
+                    <CardTitle className="text-xl flex items-center space-x-2">
+                      <Leaf className="w-6 h-6 text-success" />
+                      <span className="gradient-text">Natural Remedies</span>
+                    </CardTitle>
+                    <CardDescription>Follow these natural healing solutions</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-3">
+                      {naturalRemedies.map((remedy, index) => (
+                        <li 
+                          key={index} 
+                          className="flex items-start space-x-3 p-2 rounded-lg hover:bg-success/5 transition-colors animate-fade-in"
+                          style={{ animationDelay: `${index * 50}ms` }}
+                        >
+                          <Check className="w-5 h-5 text-success mt-0.5 flex-shrink-0" />
+                          <span className="text-sm leading-relaxed">{remedy}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
               </div>
             </TabsContent>
 
