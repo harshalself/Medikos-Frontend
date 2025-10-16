@@ -21,6 +21,7 @@ import {
   TrendingUp,
   Activity,
   ThermometerSun,
+  Brain,
   Trash2,
   PieChart,
   LineChart,
@@ -34,7 +35,7 @@ import { DiaryEntry, MoodType } from '@/types/diary';
 
 const HealthDiary = () => {
   const { toast } = useToast();
-  const { createEntry, fetchEntries, isCreating, isFetching, entries: apiEntries, totalCount } = useHealthDiary();
+  const { createEntry, fetchEntries, deleteEntry, fetchHealthSummary, isCreating, isFetching, isDeleting, isFetchingSummary, entries: apiEntries, totalCount, healthSummary } = useHealthDiary();
   
   const [entries, setEntries] = useState<DiaryEntry[]>([]);
 
@@ -119,14 +120,6 @@ const HealthDiary = () => {
     } catch (error) {
       // Error is already handled in the hook
     }
-  };
-
-  const deleteEntry = (id: string) => {
-    setEntries(prev => prev.filter(entry => entry.id !== id));
-    toast({
-      title: "Entry Deleted",
-      description: "The diary entry has been removed."
-    });
   };
 
   // Analytics calculations
@@ -375,7 +368,14 @@ const HealthDiary = () => {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                onClick={() => deleteEntry(entry.id)}
+                                onClick={async () => {
+                                  try {
+                                    await deleteEntry(entry.id);
+                                  } catch (error) {
+                                    // Error is already handled in the hook
+                                  }
+                                }}
+                                disabled={isDeleting}
                                 className="text-red-600 hover:text-red-700"
                               >
                                 <Trash2 className="h-4 w-4" />
@@ -479,7 +479,7 @@ const HealthDiary = () => {
                 </div>
 
                 {/* Charts Section */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {/* Category Distribution */}
                   <Card>
                     <CardHeader>
@@ -581,39 +581,116 @@ const HealthDiary = () => {
                     </CardContent>
                   </Card>
 
-                  {/* Health Insights */}
-                  <Card>
+                  {/* AI Health Summary */}
+                  <Card className="lg:col-span-3">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
-                        <Zap className="h-5 w-5" />
-                        Health Insights
+                        <Brain className="h-5 w-5" />
+                        AI Health Summary
                       </CardTitle>
+                      <CardDescription>
+                        Get AI-powered insights about your health patterns and trends
+                      </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <div className="space-y-4">
-                        <div className="p-3 bg-teal-50 rounded-lg">
-                          <h4 className="font-medium text-teal-800 mb-1">Tracking Consistency</h4>
-                          <p className="text-sm text-teal-700">
-                            {entries.length >= 7 ? 'Excellent tracking! Keep it up.' : 'Try to log entries more regularly for better insights.'}
-                          </p>
+                      {healthSummary ? (
+                        <div className="space-y-4">
+                          <div className="prose prose-sm max-w-none">
+                            <div className="text-gray-700 leading-relaxed">
+                              {healthSummary.summary.split('\n').map((line, index) => (
+                                <p key={index} className="mb-3">
+                                  {line.split(/(\*\*.*?\*\*)/g).map((part, partIndex) => {
+                                    if (part.startsWith('**') && part.endsWith('**')) {
+                                      return (
+                                        <strong key={partIndex} className="font-semibold text-gray-900">
+                                          {part.slice(2, -2)}
+                                        </strong>
+                                      );
+                                    }
+                                    return part;
+                                  })}
+                                </p>
+                              ))}
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between pt-4 border-t">
+                            <div className="text-sm text-gray-500">
+                              <span className="font-medium">Based on {healthSummary.total_entries} entries</span>
+                              <br />
+                              <span>
+                                {new Date(healthSummary.date_range.start).toLocaleDateString()} - {new Date(healthSummary.date_range.end).toLocaleDateString()}
+                              </span>
+                            </div>
+                            <div className="text-xs text-gray-400">
+                              Generated: {new Date(healthSummary.generated_at).toLocaleString()}
+                            </div>
+                          </div>
                         </div>
-                        <div className="p-3 bg-blue-50 rounded-lg">
-                          <h4 className="font-medium text-blue-800 mb-1">Mood Pattern</h4>
-                          <p className="text-sm text-blue-700">
-                            {entries.length > 0 && ['happy', 'excited', 'energetic', 'calm', 'grateful', 'peaceful', 'relaxed'].includes(mostCommonMood)
-                              ? 'Your overall mood is positive!' 
-                              : 'Consider focusing on activities that boost your mood.'}
+                      ) : (
+                        <div className="text-center py-8">
+                          <Brain className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                          <p className="text-gray-600 mb-4">
+                            Generate an AI-powered health summary based on your diary entries
                           </p>
+                          {entries.length === 0 ? (
+                            <p className="text-sm text-gray-500">
+                              Add some diary entries first to generate insights
+                            </p>
+                          ) : (
+                            <Button
+                              onClick={async () => {
+                                try {
+                                  await fetchHealthSummary();
+                                } catch (error) {
+                                  // Error is already handled in the hook
+                                }
+                              }}
+                              disabled={isFetchingSummary}
+                              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+                            >
+                              {isFetchingSummary ? (
+                                <>
+                                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                                  Generating...
+                                </>
+                              ) : (
+                                <>
+                                  <Brain className="h-4 w-4 mr-2" />
+                                  Generate Summary
+                                </>
+                              )}
+                            </Button>
+                          )}
                         </div>
-                        <div className="p-3 bg-purple-50 rounded-lg">
-                          <h4 className="font-medium text-purple-800 mb-1">Category Balance</h4>
-                          <p className="text-sm text-purple-700">
-                            {moodStats.length >= 3 
-                              ? 'Good variety in mood tracking.' 
-                              : 'Consider tracking different mood states.'}
-                          </p>
+                      )}
+                      {healthSummary && (
+                        <div className="pt-4 border-t">
+                          <Button
+                            variant="outline"
+                            onClick={async () => {
+                              try {
+                                await fetchHealthSummary();
+                              } catch (error) {
+                                // Error is already handled in the hook
+                              }
+                            }}
+                            disabled={isFetchingSummary}
+                            className="w-full"
+                          >
+                            {isFetchingSummary ? (
+                              <>
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600 mr-2"></div>
+                                Refreshing...
+                              </>
+                            ) : (
+                              <>
+                                <Brain className="h-4 w-4 mr-2" />
+                                Refresh Summary
+                              </>
+                            )}
+                          </Button>
                         </div>
-                      </div>
+                      )}
                     </CardContent>
                   </Card>
                 </div>

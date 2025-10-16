@@ -44,6 +44,16 @@ export interface DiaryStats {
   user_id: string;
 }
 
+export interface HealthSummary {
+  summary: string;
+  total_entries: number;
+  date_range: {
+    start: string;
+    end: string;
+  };
+  generated_at: string;
+}
+
 export type MoodType =
   | 'happy' | 'sad' | 'anxious' | 'neutral' | 'excited'
   | 'tired' | 'energetic' | 'calm' | 'frustrated' | 'grateful'

@@ -2,13 +2,16 @@ import { useState, useCallback } from 'react';
 import { api } from '@/lib/api';
 import { API_ENDPOINTS } from '@/lib/api-config';
 import { useToast } from '@/hooks/use-toast';
-import { DiaryEntry, CreateDiaryEntryRequest, DiaryFilters, DiaryListResponse } from '@/types/diary';
+import { DiaryEntry, CreateDiaryEntryRequest, DiaryFilters, DiaryListResponse, HealthSummary } from '@/types/diary';
 
 export const useHealthDiary = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isFetchingSummary, setIsFetchingSummary] = useState(false);
   const [entries, setEntries] = useState<DiaryEntry[]>([]);
   const [totalCount, setTotalCount] = useState(0);
+  const [healthSummary, setHealthSummary] = useState<HealthSummary | null>(null);
   const { toast } = useToast();
 
   const createEntry = useCallback(async (entryData: CreateDiaryEntryRequest): Promise<DiaryEntry> => {
@@ -70,12 +73,73 @@ export const useHealthDiary = () => {
     }
   }, [toast]);
 
+  const deleteEntry = useCallback(async (entryId: string): Promise<void> => {
+    setIsDeleting(true);
+    try {
+      await api.delete(`${API_ENDPOINTS.healthDiary.list}/${entryId}`);
+
+      // Remove the entry from local state
+      setEntries(prev => prev.filter(entry => entry.id !== entryId));
+      setTotalCount(prev => prev - 1);
+
+      toast({
+        title: 'Success',
+        description: 'Diary entry deleted successfully',
+      });
+    } catch (error: any) {
+      console.error('[HealthDiary] Delete entry failed:', error.message);
+
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to delete diary entry',
+        variant: 'destructive',
+      });
+
+      throw error;
+    } finally {
+      setIsDeleting(false);
+    }
+  }, [toast]);
+
+  const fetchHealthSummary = useCallback(async (): Promise<HealthSummary> => {
+    setIsFetchingSummary(true);
+    try {
+      const response = await api.get<HealthSummary>(`${API_ENDPOINTS.healthDiary.list}/summary`);
+
+      setHealthSummary(response);
+
+      toast({
+        title: 'Success',
+        description: 'Health summary generated successfully',
+      });
+
+      return response;
+    } catch (error: any) {
+      console.error('[HealthDiary] Fetch health summary failed:', error.message);
+
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to generate health summary',
+        variant: 'destructive',
+      });
+
+      throw error;
+    } finally {
+      setIsFetchingSummary(false);
+    }
+  }, [toast]);
+
   return {
     createEntry,
     fetchEntries,
+    deleteEntry,
+    fetchHealthSummary,
     isCreating,
     isFetching,
+    isDeleting,
+    isFetchingSummary,
     entries,
     totalCount,
+    healthSummary,
   };
 };
