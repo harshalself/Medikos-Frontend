@@ -73,9 +73,6 @@ class APIClient {
       ? endpoint 
       : `${API_BASE_URL}${endpoint}`;
     
-    console.log('API Request URL:', url);
-    console.log('API_BASE_URL:', API_BASE_URL);
-    console.log('Endpoint:', endpoint);
     // Merge headers
     const headers = {
       ...getCommonHeaders(includeAuth),
@@ -108,11 +105,13 @@ class APIClient {
       
       // Handle no content
       if (response.status === 204) {
+        console.log('[API Request] Success - No content response');
         return {} as T;
       }
       
       // Parse JSON response
       const data = await response.json();
+      console.log('[API Request] Success response:', data);
       return data as T;
       
     } catch (error) {

@@ -43,6 +43,13 @@ export const API_ENDPOINTS = {
   medicineSuggester: {
     suggestAlternatives: '/api/medicine-suggester/suggest-alternatives',
   },
+  medivault: {
+    upload: '/api/medivault/upload',
+    documents: '/api/medivault/documents',
+    download: (documentId: number) => `/api/medivault/download/${documentId}`,
+    update: (documentId: number) => `/api/medivault/${documentId}`,
+    delete: (documentId: number) => `/api/medivault/${documentId}`,
+  },
   remediesSuggestion: {
     suggest: '/api/remedies-suggestion/suggest',
   },
