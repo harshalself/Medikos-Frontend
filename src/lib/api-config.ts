@@ -1,0 +1,46 @@
+/**
+ * API Configuration
+ * Central configuration for all API endpoints and settings
+ */
+
+// Get base URL from environment variables
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+export const API_TIMEOUT = Number(import.meta.env.VITE_API_TIMEOUT) || 30000;
+
+/**
+ * API Endpoints
+ * Add endpoints here as you receive backend API documentation
+ * 
+ * Example structure:
+ * export const API_ENDPOINTS = {
+ *   auth: {
+ *     login: '/api/auth/login',
+ *     register: '/api/auth/register',
+ *   },
+ *   users: {
+ *     list: '/api/users',
+ *     detail: (id: string) => `/api/users/${id}`,
+ *   },
+ * } as const;
+ */
+export const API_ENDPOINTS = {
+  // Endpoints will be added based on backend API documentation
+} as const;
+
+/**
+ * Common HTTP Headers
+ */
+export const getCommonHeaders = (includeAuth = true): HeadersInit => {
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  };
+  
+  if (includeAuth) {
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+  }
+  
+  return headers;
+};
