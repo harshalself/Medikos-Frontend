@@ -5,8 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Heart, Shield, Users, Stethoscope, User, Loader2, AlertCircle } from "lucide-react";
+import { Heart, Users, Stethoscope, User, Loader2, AlertCircle, Lock } from "lucide-react";
 import { useAuth, UserRole } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 import medicalBg from "@/assets/medical-bg.jpg";
 
 const Login = () => {
@@ -20,7 +21,8 @@ const Login = () => {
   const [selectedRole, setSelectedRole] = useState<UserRole>("patient");
   const [localError, setLocalError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { login, isLoading, error, clearError } = useAuth();
+  const { login, signup, isLoading, error, clearError } = useAuth();
+  const { toast } = useToast();
 
   // Check URL parameters to set initial mode
   useEffect(() => {
@@ -49,22 +51,30 @@ const Login = () => {
         setLocalError("Passwords don't match!");
         return;
       }
-      if (password.length < 8) {
-        setLocalError("Password must be at least 8 characters long!");
+      if (password.length < 6) {
+        setLocalError("Password must be at least 6 characters long!");
         return;
       }
       if (!fullName.trim()) {
         setLocalError("Please enter your full name!");
         return;
       }
-      if (!phoneNumber.trim()) {
-        setLocalError("Please enter your phone number!");
+      
+      // Signup
+      try {
+        await signup(email, password, fullName);
+        
+        // After successful signup, navigate to login
+        setIsLogin(true);
+        setLocalError(null);
+        clearError();
+        
+        return;
+      } catch (err) {
+        // Error is handled by AuthContext
+        console.error("Signup error:", err);
         return;
       }
-      
-      // Signup functionality will be implemented when backend docs are provided
-      setLocalError("Signup functionality will be available soon. Please use login for now.");
-      return;
     }
     
     // Login
@@ -74,8 +84,6 @@ const Login = () => {
       // Navigate based on role
       if (selectedRole === "doctor") {
         navigate("/doctor-dashboard");
-      } else if (selectedRole === "admin") {
-        navigate("/admin-dashboard");
       } else {
         navigate("/dashboard");
       }
@@ -138,7 +146,7 @@ const Login = () => {
                 
                 <div className="space-y-2">
                   <Label htmlFor="role" className="text-sm font-semibold">{isLogin ? "Login As" : "Register As"}</Label>
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-2 gap-3">
                     <Button
                       type="button"
                       variant={selectedRole === "patient" ? "default" : "outline"}
@@ -160,17 +168,6 @@ const Login = () => {
                     >
                       <Stethoscope className="w-8 h-8 mb-2" />
                       <span className="text-sm font-medium">Doctor</span>
-                    </Button>
-                    <Button
-                      type="button"
-                      variant={selectedRole === "admin" ? "default" : "outline"}
-                      className={`h-24 flex flex-col items-center justify-center card-hover transition-all duration-300 ${
-                        selectedRole === "admin" ? "bg-gradient-to-br from-orange-500 to-red-600 shadow-lg" : ""
-                      }`}
-                      onClick={() => setSelectedRole("admin")}
-                    >
-                      <Shield className="w-8 h-8 mb-2" />
-                      <span className="text-sm font-medium">Admin</span>
                     </Button>
                   </div>
                 </div>
@@ -291,7 +288,7 @@ const Login = () => {
           {/* Trust Indicators */}
           <div className="mt-8 grid grid-cols-3 gap-4 text-center animate-fade-in">
             <div className="text-white/80">
-              <Shield className="w-6 h-6 mx-auto mb-2" />
+              <Lock className="w-6 h-6 mx-auto mb-2" />
               <p className="text-xs">Secure & Private</p>
             </div>
             <div className="text-white/80">
