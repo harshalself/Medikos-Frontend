@@ -293,6 +293,21 @@ export interface DiseasePredictionResponse {
 }
 
 // ============================================
+// SHAP Disease Prediction (Backend Contract)
+// Endpoint: POST /predict_with_shap
+// Request: { symptoms: string[] }
+// Response: { prediction: string, symptom_importance: Record<string, number> }
+// ============================================
+export interface PredictWithShapRequest {
+  symptoms: string[];
+}
+
+export interface PredictWithShapResponse {
+  prediction: string;
+  symptom_importance: Record<string, number>;
+}
+
+// ============================================
 // Admin Types
 // ============================================
 

@@ -4,6 +4,7 @@
  */
 
 import { API_BASE_URL, API_TIMEOUT, getCommonHeaders } from './api-config';
+import type { PredictWithShapRequest, PredictWithShapResponse } from '@/types/api';
 
 /**
  * API Error Class
@@ -143,6 +144,19 @@ class APIClient {
       ...options,
       method: 'POST',
       body: data ? JSON.stringify(data) : undefined,
+    });
+  }
+
+  /**
+   * Predict disease with SHAP explanations
+   * Backend contract: POST /api/predict_with_shap
+   */
+  async predictWithShap(data: PredictWithShapRequest) : Promise<PredictWithShapResponse> {
+    return this.post<PredictWithShapResponse>('/api/predict_with_shap', data, {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      includeAuth: false
     });
   }
   
