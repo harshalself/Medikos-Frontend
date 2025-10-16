@@ -1,10 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useHealthDiary } from "@/hooks/use-health-diary";
+import { useMediVault } from "@/hooks/use-medi-vault";
 import { 
   Shield, 
   Pill, 
@@ -22,59 +24,78 @@ import {
   BookOpen,
   Clock,
   Sparkles,
-  BarChart3,
-  PieChart,
-  LineChart,
   Users,
   Target,
   Zap,
-  CheckCircle,
   AlertCircle,
-  Apple,
-  Dumbbell,
   Mic
 } from "lucide-react";
 
 const Dashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { fetchEntries, totalCount, entries } = useHealthDiary();
+  const { fetchDocuments, documents } = useMediVault();
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Health Summary Cards Data
+  // Fetch real data on mount
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        await Promise.all([
+          fetchEntries({ limit: 10 }),
+          fetchDocuments()
+        ]);
+      } catch (error) {
+        console.error('Dashboard load error:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount
+
+  // Real data stats
+  const totalDocuments = documents.length;
+  const totalDiaryEntries = totalCount;
+
+  // Health Summary Cards Data - Using Real Data
   const healthSummaryCards = [
     { 
-      title: "Total Reports Uploaded", 
-      value: "24", 
-      subtitle: "Reports",
+      title: "Medical Documents", 
+      value: isLoading ? "..." : totalDocuments.toString(), 
+      subtitle: "Uploaded Files",
       icon: FileText, 
       color: "from-blue-500 to-cyan-500",
-      trend: "+3 this week",
-      trendDirection: "up"
+      trend: totalDocuments > 0 ? `${totalDocuments} uploaded` : "Upload your first document",
+      trendDirection: totalDocuments > 0 ? "up" : "stable"
     },
     { 
-      title: "Active Health Conditions", 
-      value: "2", 
-      subtitle: "Ongoing Issues",
-      icon: AlertCircle, 
-      color: "from-orange-500 to-red-500",
-      trend: "Stable",
+      title: "Health Diary", 
+      value: isLoading ? "..." : totalDiaryEntries.toString(), 
+      subtitle: "Total Entries",
+      icon: BookOpen, 
+      color: "from-purple-500 to-pink-500",
+      trend: totalDiaryEntries > 0 ? `${entries.slice(0, 5).length} recent` : "Start tracking",
+      trendDirection: totalDiaryEntries > 0 ? "up" : "stable"
+    },
+    { 
+      title: "Health Passport", 
+      value: "1", 
+      subtitle: "Active Profile",
+      icon: Shield, 
+      color: "from-green-500 to-teal-500",
+      trend: "Completed",
       trendDirection: "stable"
     },
     { 
-      title: "Medicines in Use", 
+      title: "AI Features", 
       value: "5", 
-      subtitle: "Current Medications",
-      icon: Pill, 
-      color: "from-green-500 to-teal-500",
-      trend: "+1 prescribed",
-      trendDirection: "up"
-    },
-    { 
-      title: "Personal Notes", 
-      value: "3", 
-      subtitle: "Notes Added",
-      icon: BookOpen, 
-      color: "from-purple-500 to-pink-500",
-      trend: "2 recent",
+      subtitle: "Available Tools",
+      icon: Brain, 
+      color: "from-orange-500 to-red-500",
+      trend: "Ready to explore",
       trendDirection: "up"
     },
   ];
@@ -89,127 +110,6 @@ const Dashboard = () => {
     { title: "Natural Remedies & Diet", icon: Leaf, path: "/remedies", color: "from-green-500 to-teal-500" },
     { title: "MediVault", icon: FileText, path: "/medivault", color: "from-indigo-500 to-blue-500" },
     { title: "Health Diary", icon: BookOpen, path: "/health-diary", color: "from-orange-500 to-yellow-500" },
-  ];
-
-  // AI Insights Data
-  const aiInsights = [
-    {
-      type: "positive",
-      icon: CheckCircle,
-      message: "Your sugar readings have stabilized over the last week.",
-      color: "from-green-500 to-emerald-500"
-    },
-    {
-      type: "suggestion",
-      icon: Sparkles,
-      message: "You may want to log new symptoms for better accuracy.",
-      color: "from-blue-500 to-cyan-500"
-    },
-    {
-      type: "achievement",
-      icon: Target,
-      message: "You've viewed 3 new remedies this week — great consistency!",
-      color: "from-purple-500 to-pink-500"
-    }
-  ];
-
-  // Recent Activity Data
-  const recentActivity = [
-    { 
-      action: "Uploaded Lab Report", 
-      time: "3 hours ago", 
-      icon: FileText,
-      color: "bg-blue-500"
-    },
-    { 
-      action: "Checked Natural Remedies", 
-      time: "Yesterday", 
-      icon: Leaf,
-      color: "bg-green-500"
-    },
-    { 
-      action: "Added Note in Health Diary", 
-      time: "2 days ago", 
-      icon: BookOpen,
-      color: "bg-purple-500"
-    },
-    { 
-      action: "Completed Disease Prediction", 
-      time: "3 days ago", 
-      icon: Brain,
-      color: "bg-pink-500"
-    },
-    { 
-      action: "Consulted AI Assistant", 
-      time: "4 days ago", 
-      icon: MessageCircle,
-      color: "bg-indigo-500"
-    }
-  ];
-
-  // Activity Timeline data
-  const activityTimeline = [
-    {
-      title: "Health Checkup Completed",
-      description: "Completed comprehensive health assessment with AI analysis",
-      time: "2 hours ago",
-      category: "Assessment",
-      icon: Heart,
-      color: "bg-gradient-to-br from-red-400 to-pink-500",
-      metrics: ["Blood Pressure: Normal", "Heart Rate: 72 bpm"]
-    },
-    {
-      title: "Generic Medicine Search",
-      description: "Found 3 alternatives for prescribed medication with cost savings",
-      time: "5 hours ago", 
-      category: "Medicine",
-      icon: Pill,
-      color: "bg-gradient-to-br from-blue-400 to-blue-600",
-      metrics: ["Saved ₹450", "3 alternatives found"]
-    },
-    {
-      title: "Diet Plan Updated",
-      description: "AI recommended Mediterranean diet based on your health profile",
-      time: "1 day ago",
-      category: "Nutrition",
-      icon: Apple,
-      color: "bg-gradient-to-br from-green-400 to-green-600",
-      metrics: ["Protein: 25g", "Fiber: 35g", "Calories: 1800"]
-    },
-    {
-      title: "Symptom Tracking",
-      description: "Logged mild headache and fatigue symptoms for analysis",
-      time: "2 days ago",
-      category: "Symptoms", 
-      icon: Activity,
-      color: "bg-gradient-to-br from-yellow-400 to-orange-500",
-      metrics: ["Severity: 3/10", "Duration: 2 hours"]
-    },
-    {
-      title: "Health Diary Entry",
-      description: "Recorded daily wellness metrics and mood tracking",
-      time: "3 days ago",
-      category: "Wellness",
-      icon: BookOpen,
-      color: "bg-gradient-to-br from-purple-400 to-purple-600",
-      metrics: ["Mood: 7/10", "Energy: 8/10", "Sleep: 7 hours"]
-    }
-  ];
-
-  // Chart Data (Mock data for visualization)
-  const diseaseRiskTrend = [
-    { week: "Week 1", risk: 65 },
-    { week: "Week 2", risk: 58 },
-    { week: "Week 3", risk: 45 },
-    { week: "Week 4", risk: 42 }
-  ];
-
-  const healthActivityDistribution = [
-    { name: "Physical Activity", value: 30, color: "#10B981" },
-    { name: "Sleep Tracking", value: 25, color: "#3B82F6" },
-    { name: "Diet Monitoring", value: 20, color: "#F59E0B" },
-    { name: "Remedies Used", value: 15, color: "#8B5CF6" },
-    { name: "Symptom Logging", value: 10, color: "#EF4444" }
   ];
 
   const lastLoginTime = new Date().toLocaleDateString('en-US', { 
@@ -322,118 +222,6 @@ const Dashboard = () => {
             </div>
           </section>
 
-          {/* 💹 Analytics Overview */}
-          <section className="py-12">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
-                 style={{ paddingLeft: 'max(1.5rem, calc(50vw - 896px + 1.5rem + 80px))' }}>
-              <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold text-gray-800 mb-4">🧠 Health Analytics Panel</h2>
-                <p className="text-lg text-gray-600">Comprehensive insights into your health patterns and trends</p>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                {/* Disease Prediction Trends */}
-                <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-3">
-                      <LineChart className="w-6 h-6 text-blue-600" />
-                      Disease Prediction Trends
-                    </CardTitle>
-                    <CardDescription>Risk assessment over the last 4 weeks</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {diseaseRiskTrend.map((item, index) => (
-                        <div key={index} className="flex items-center justify-between">
-                          <span className="text-sm font-medium text-gray-600">{item.week}</span>
-                          <div className="flex-1 mx-4">
-                            <div className="w-full bg-gray-100 rounded-full h-3">
-                              <div 
-                                className="bg-gradient-to-r from-red-400 to-yellow-400 h-3 rounded-full transition-all duration-1000"
-                                style={{ width: `${item.risk}%` }}
-                              ></div>
-                            </div>
-                          </div>
-                          <span className="text-sm font-bold text-gray-800">{item.risk}%</span>
-                        </div>
-                      ))}
-                      <div className="mt-4 p-3 bg-green-50 rounded-lg">
-                        <p className="text-sm text-green-700 font-medium">
-                          ✨ Flu risk decreased by 23% this week - Great improvement!
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Health Activity Distribution */}
-                <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-3">
-                      <PieChart className="w-6 h-6 text-purple-600" />
-                      Health Activity Distribution
-                    </CardTitle>
-                    <CardDescription>Your wellness engagement breakdown</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {healthActivityDistribution.map((item, index) => (
-                        <div key={index} className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div 
-                              className="w-4 h-4 rounded-full" 
-                              style={{ backgroundColor: item.color }}
-                            ></div>
-                            <span className="text-sm font-medium text-gray-600">{item.name}</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <div className="w-20 bg-gray-100 rounded-full h-2">
-                              <div 
-                                className="h-2 rounded-full transition-all duration-1000"
-                                style={{ 
-                                  width: `${item.value * 3}%`, 
-                                  backgroundColor: item.color 
-                                }}
-                              ></div>
-                            </div>
-                            <span className="text-sm font-bold text-gray-800 w-8">{item.value}%</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Diet & Remedy Engagement */}
-              <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm mb-8">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-3">
-                    <BarChart3 className="w-6 h-6 text-green-600" />
-                    Diet & Remedy Engagement
-                  </CardTitle>
-                  <CardDescription>Your interaction with Ayurvedic and diet suggestions</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="text-center p-4 bg-green-50 rounded-xl">
-                      <div className="text-2xl font-bold text-green-600 mb-2">12</div>
-                      <div className="text-sm text-green-700">Remedies Viewed</div>
-                    </div>
-                    <div className="text-center p-4 bg-blue-50 rounded-xl">
-                      <div className="text-2xl font-bold text-blue-600 mb-2">8</div>
-                      <div className="text-sm text-blue-700">Diet Plans Applied</div>
-                    </div>
-                    <div className="text-center p-4 bg-purple-50 rounded-xl">
-                      <div className="text-2xl font-bold text-purple-600 mb-2">5</div>
-                      <div className="text-sm text-purple-700">Symptoms Tracked</div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </section>
-
           {/* 🩺 Quick Actions - Scrollable like Landing Page */}
           <section className="py-12 bg-white/50 backdrop-blur-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
@@ -476,129 +264,6 @@ const Dashboard = () => {
             </div>
           </section>
 
-          {/* 🧠 AI Insights */}
-          <section className="py-12">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
-                 style={{ paddingLeft: 'max(1.5rem, calc(50vw - 896px + 1.5rem + 80px))' }}>
-              <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold text-gray-800 mb-4">💡 AI Health Insights</h2>
-                <p className="text-lg text-gray-600">Personalized health recommendations from our AI assistant</p>
-              </div>
-              
-              <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                {/* AI Insights Image */}
-                <div className="lg:col-span-1">
-                  <Card className="h-full border-0 bg-gradient-to-br from-blue-50 to-indigo-100 overflow-hidden">
-                    <CardContent className="p-0 h-full flex flex-col justify-center">
-                      <div className="relative h-64 lg:h-full">
-                        <img 
-                          src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                          alt="AI Health Insights" 
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-blue-600/30 to-transparent flex items-end p-6">
-                          <div className="text-white">
-                            <h3 className="text-xl font-bold mb-2">AI-Powered Health</h3>
-                            <p className="text-sm opacity-90">Smart insights for better health decisions</p>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                {/* AI Insights Cards */}
-                <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {aiInsights.map((insight, index) => (
-                    <Card 
-                      key={index} 
-                      className="group hover:shadow-2xl transition-all duration-500 border-0 bg-white/90 backdrop-blur-sm overflow-hidden animate-slide-up"
-                      style={{ animationDelay: `${index * 0.2}s` }}
-                    >
-                      <CardHeader className="pb-4">
-                        <div className="flex items-center justify-between mb-3">
-                          <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${insight.color} flex items-center justify-center shadow-lg group-hover:rotate-12 transition-transform duration-300`}>
-                            <insight.icon className="w-6 h-6 text-white" />
-                          </div>
-                          <Badge variant="secondary" className="text-xs">
-                            {insight.type}
-                          </Badge>
-                        </div>
-                        <CardTitle className="text-lg font-bold text-gray-800 group-hover:text-blue-600 transition-colors">
-                          AI {insight.type} Insight
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-gray-600 leading-relaxed mb-4">{insight.message}</p>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-blue-400"></div>
-                            <span className="text-xs text-gray-500">AI Recommendation</span>
-                          </div>
-                          <span className="text-xs text-gray-400">Today</span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* 📅 Activity Timeline */}
-          <section className="py-12 bg-white/50 backdrop-blur-sm">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
-                 style={{ paddingLeft: 'max(1.5rem, calc(50vw - 896px + 1.5rem + 80px))' }}>
-              <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold text-gray-800 mb-4">⏰ Recent Activity Timeline</h2>
-                <p className="text-lg text-gray-600">Your health journey over the past week</p>
-              </div>
-              
-              <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm">
-                <CardContent className="p-8">
-                  <div className="space-y-6">
-                    {activityTimeline.map((activity, index) => (
-                      <div key={index} className="flex items-start gap-4 relative">
-                        {/* Timeline line */}
-                        {index !== activityTimeline.length - 1 && (
-                          <div className="absolute left-6 top-12 w-0.5 h-16 bg-gradient-to-b from-blue-200 to-transparent"></div>
-                        )}
-                        
-                        {/* Activity icon */}
-                        <div className={`w-12 h-12 rounded-full ${activity.color} flex items-center justify-center shadow-lg z-10`}>
-                          <activity.icon className="w-6 h-6 text-white" />
-                        </div>
-                        
-                        {/* Activity content */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-lg font-semibold text-gray-800">{activity.title}</h3>
-                            <div className="flex items-center gap-2">
-                              <Badge variant="outline" className="text-xs">
-                                {activity.category}
-                              </Badge>
-                              <span className="text-sm text-gray-500">{activity.time}</span>
-                            </div>
-                          </div>
-                          <p className="text-gray-600 mb-3">{activity.description}</p>
-                          {activity.metrics && (
-                            <div className="flex gap-4 text-sm">
-                              {activity.metrics.map((metric, metricIndex) => (
-                                <div key={metricIndex} className="flex items-center gap-1">
-                                  <div className="w-2 h-2 rounded-full bg-blue-400"></div>
-                                  <span className="text-gray-600">{metric}</span>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </section>
         </main>
     </AppLayout>
   );
