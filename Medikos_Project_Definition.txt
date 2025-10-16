@@ -1,0 +1,170 @@
+# MEDIKOS HEALTH COMPASS - PROJECT DEFINITION & REFERENCE
+
+## PROJECT OVERVIEW
+Medikos Health Compass is a React-based healthcare web application providing patients with AI-powered health management tools, medical document storage, and natural health recommendations, with dedicated dashboards for doctors and administrators.
+
+## SYSTEM PURPOSE
+To provide a digital healthcare platform where patients can manage their health data, receive AI-powered health insights, and maintain comprehensive medical records, with role-based access for healthcare providers.
+
+## CORE STAKEHOLDERS (ACTUAL IMPLEMENTATION)
+
+### 1. PATIENTS (Primary Users - Full Implementation)
+- Dashboard with health metrics (Heart Rate, Blood Pressure, BMI, Sleep)
+- AI-powered infectious disease prediction based on symptoms
+- Generic medicine alternatives with price comparisons
+- Health diary with mood tracking and analytics
+- Natural remedies and diet suggestions based on symptoms
+- MediVault for secure medical document storage and management
+- AI chatbot for health queries and guidance
+- AI voice agent for voice-activated health assistance
+- Digital health passport with QR code generation
+- Profile and settings management
+
+### 2. DOCTORS (Secondary Users)
+- Doctor dashboard with patient analytics and health metrics overview
+- "My Patients" section with comprehensive patient management
+- Access to patients' Health Passport for complete medical history review
+- Review of patients' AI-predicted diseases and risk assessments  
+- Health Diary analytics showing patient mood patterns and behavioral insights
+- Access to shared documents from patients' MediVault with permission-based viewing
+- Patient communication and consultation scheduling
+- AI-assisted diagnosis support and treatment recommendations
+
+## ACTUAL FUNCTIONAL MODULES (CURRENT IMPLEMENTATION)
+
+### PATIENT PORTAL FEATURES (FULLY IMPLEMENTED)
+1. **Dashboard**: Health metrics display (Heart Rate, Blood Pressure, BMI, Sleep), quick actions grid, recent activities
+2. **Infectious Disease Prediction**: Symptom selection interface, AI-powered disease prediction with probability percentages
+3. **Generic Medicine Suggester**: Medicine search, alternative suggestions with pricing and manufacturer details
+4. **Health Diary**: Entry creation with mood/category selection, calendar view, analytics dashboard with trends
+5. **Natural Remedies**: Symptom input, herbal remedies suggestions, diet recommendations (include/avoid lists)
+6. **MediVault**: Document upload with categorization (Prescription, Report, Insurance, Vaccination, X-Ray), file management
+7. **AI Chatbot**: Interactive health consultation interface (/chatbot route)
+8. **AI Voice Agent**: Voice-activated health assistance (/voice-agent route)
+9. **Health Passport**: Personal health profile with emergency contacts, medical history, QR code generation
+10. **Profile & Settings**: Account management, AI preferences, privacy settings
+
+### DOCTOR PORTAL FEATURES
+1. **Doctor Dashboard**: Patient analytics dashboard with detailed health metrics and trends
+2. **My Patients**: Comprehensive patient management with health status monitoring
+3. **Patient Health Passports**: Access to complete medical profiles and history
+4. **Disease Prediction Review**: View patients' AI-generated health risk assessments
+5. **Health Diary Analytics**: Patient mood patterns, behavioral insights, and trend analysis
+6. **Shared Documents Access**: Review medical documents shared by patients through MediVault
+7. **AI Diagnosis Assistant**: AI-powered diagnostic support and treatment recommendations
+8. **Patient Communication**: Secure messaging and consultation scheduling
+
+
+
+## CURRENT TECHNICAL ARCHITECTURE
+
+### FRONTEND IMPLEMENTATION
+- **Framework**: React 18.3.1 with TypeScript
+- **Build Tool**: Vite v5.4.1 for development and build process
+- **Routing**: React Router v6.26.2 with role-based navigation (patient/doctor/admin dashboards)
+- **State Management**: React Context API (AuthContext for user authentication)
+- **UI Framework**: shadcn/ui components built on Radix UI primitives
+- **Styling**: Tailwind CSS with custom gradient themes and medical designs
+- **Animations**: Framer Motion v12.23.22 for page transitions and interactions
+- **Icons**: Lucide React v0.462.0 for consistent iconography
+- **Forms**: React Hook Form with Zod validation
+
+### DATA MANAGEMENT (CLIENT-SIDE)
+- **Authentication**: Frontend-only simulation with role-based routing
+- **Storage**: Browser localStorage for user preferences and temporary data
+- **File Handling**: File uploads with metadata management (MediVault)
+- **State Persistence**: Context-based state management across components
+
+### ROUTING STRUCTURE
+- **Public Routes**: `/` (Landing), `/login`
+- **Patient Routes**: `/dashboard`, `/remedies`, `/medivault`, `/passport`, `/generic-medicine`, `/disease-prediction`, `/health-diary`, `/voice-agent`, `/chatbot`, `/settings`, `/profile`
+- **Doctor Routes**: `/doctor-dashboard`
+
+## ACTUAL WORKFLOWS (CURRENT IMPLEMENTATION)
+
+### PATIENT WORKFLOWS
+1. **Authentication**: Login with role selection → Role-based dashboard routing
+2. **Health Data Entry**: Symptom input → Simulated AI analysis → Results display with recommendations
+3. **Document Management**: File upload → Category selection → Metadata entry → Local storage
+4. **Health Monitoring**: Diary entries → Mood/category tracking → Analytics visualization
+5. **AI Interaction**: Text/voice queries → Simulated AI responses → Conversation history
+
+### DOCTOR WORKFLOWS
+1. **Patient Analytics Review**: Login → Dashboard → Patient metrics analysis → Health trend monitoring
+2. **Patient Management**: My Patients section → Select patient → Health passport review → Medical history access
+3. **Disease Assessment**: Patient prediction results → AI diagnosis review → Risk assessment validation
+4. **Health Monitoring**: Patient diary analytics → Mood pattern analysis → Behavioral insights review
+5. **Document Review**: Shared MediVault access → Medical document analysis → Treatment planning
+6. **Clinical Decision Support**: AI diagnosis assistant → Treatment recommendations → Patient communication
+
+
+
+### DATA ARCHITECTURE
+
+### IMPLEMENTED DATA MODELS
+- **User Authentication**: Supabase Auth with email/password, role-based access (patient/doctor)
+- **User Profiles**: Personal information, medical history, emergency contacts stored in PostgreSQL
+- **Document Structure**: Secure file storage with metadata, sharing permissions, version control
+- **Health Diary Entries**: Structured entries with mood analysis, trend tracking, and analytics
+- **Disease Predictions**: AI-processed symptom analysis with probability scoring and recommendations
+- **Medicine Database**: Comprehensive drug information with generic alternatives 
+- **Patient-Doctor Relationships**: Secure data sharing and access control between users
+
+### CURRENT TECHNOLOGY STACK
+- **Frontend**: React 18.3.1 with TypeScript, Vite build process
+- **Backend**: FastAPI for RESTful API services and data processing
+- **Database**: Supabase for PostgreSQL database hosting and management
+- **Authentication**: Supabase Auth for secure user authentication and authorization
+- **Development**: Node.js with npm package management
+- **Deployment**: Frontend static hosting with backend API deployment
+
+### PERFORMANCE CHARACTERISTICS
+- **Load Time**: Optimized with Vite for fast development and production builds
+- **Responsiveness**: Tailwind CSS responsive design for mobile/tablet/desktop
+- **Interactivity**: Framer Motion animations for smooth user experience
+- **Bundle Size**: Optimized with code splitting and tree shaking
+
+### PROJECT SCOPE & ARCHITECTURE
+
+### CURRENT IMPLEMENTATION SCOPE
+- **Full-Stack Application**: React frontend with FastAPI backend services
+- **Database Integration**: Supabase PostgreSQL for persistent data storage
+- **Authentication System**: Supabase Auth for secure user management
+- **AI Features**:infectious Disease prediction, GENERIC medicine suggestions,Natural remedies & DietRecommendation,health analytics from HealthDiary,VoicecallAgent and chatbot with backend processing
+- **Role-Based System**: Patient and doctor dashboards with appropriate data access controls
+- **Real-Time Data**: Server-side data persistence and cross-user data sharing
+
+### DEVELOPMENT STATUS
+- **Patient Portal**: Fully implemented with all planned features
+- **Doctor Portal**: Enhanced dashboard with patient analytics and comprehensive management tools
+- **Backend Services**: FastAPI integration for data processing and AI functionalities
+- **Database**: Supabase PostgreSQL for user data, medical records, and analytics
+- **Authentication**: Supabase Auth for secure login and role-based access control
+- **Cross-Role Integration**: Real-time patient data sharing with doctors through MediVault and Health Passport systems
+
+### FUTURE DEVELOPMENT OPPORTUNITIES
+- Advanced AI/ML model integration for enhanced health predictions
+- Healthcare provider API integrations (EHR systems, pharmacy networks)
+- Real-time notifications and alerts system
+- Mobile application development
+- Telemedicine integration with video consultations
+- Enhanced doctor-patient communication features
+
+## TECHNICAL DEPENDENCIES
+
+### Core Dependencies (package.json)
+- **React Ecosystem**: react@18.3.1, react-dom@18.3.1, react-router-dom@6.26.2
+- **UI Components**: @radix-ui/* components, shadcn/ui implementation
+- **Styling**: tailwindcss@3.4.11, tailwindcss-animate@1.0.7
+- **Animations**: framer-motion@12.23.22
+- **Icons**: lucide-react@0.462.0
+- **Forms**: react-hook-form@7.53.0, zod@3.23.8
+- **Development**: vite@5.4.1, typescript@5.5.3, eslint@9.9.0
+
+### Build Configuration
+- **Vite Config**: React SWC plugin, path aliases (@/ for src/)
+- **TypeScript**: Strict type checking with app and node configurations
+- **ESLint**: React hooks and refresh plugins for code quality
+- **PostCSS**: Autoprefixer and Tailwind CSS processing
+
+This authentic definition reflects the actual current state and implementation of the Medikos Health Compass project.
