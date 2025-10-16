@@ -35,18 +35,25 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface RegisterRequest {
+export interface SignupRequest {
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
-  role: 'patient' | 'doctor' | 'admin';
+  full_name: string;
 }
 
 export interface AuthResponse {
-  token: string;
-  refreshToken?: string;
-  user: User;
+  message: string;
+  user: {
+    id: string;
+    email: string;
+    full_name?: string;
+    created_at?: string;
+  };
+  session: {
+    access_token: string;
+    refresh_token?: string;
+    expires_at: number;
+  };
 }
 
 export interface User {
