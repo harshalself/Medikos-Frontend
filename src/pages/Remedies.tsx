@@ -178,26 +178,6 @@ const Remedies = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            {/* Disease and Confidence Header */}
-            <div className="mb-8 text-center">
-              <div className="inline-flex items-center space-x-3 mb-4">
-                <Badge className={`${getConfidenceColor(remediesResult.confidence_level)} text-white px-4 py-2`}>
-                  <TrendingUp className="w-4 h-4 mr-2" />
-                  {remediesResult.confidence_level} Confidence
-                </Badge>
-                <span className={`text-sm font-medium ${getConfidenceTextColor(remediesResult.confidence_level)}`}>
-                  Match Score: {Math.round(remediesResult.match_score * 100)}%
-                </span>
-              </div>
-
-              <h2 className="text-3xl font-bold text-foreground mb-2">
-                Possible Condition: {remediesResult.disease}
-              </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Based on symptoms: {remediesResult.symptoms}
-              </p>
-            </div>
-
             <Tabs defaultValue="remedies" className="space-y-8">
               <TabsList className="grid w-full grid-cols-2 lg:w-auto">
                 <TabsTrigger value="remedies" className="space-x-2">

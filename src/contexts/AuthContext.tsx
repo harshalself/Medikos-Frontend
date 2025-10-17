@@ -38,41 +38,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const initAuth = async () => {
       const token = localStorage.getItem("auth_token");
-      if (token) {
-        try {
-          // Verify token and get user info
-          const userData = await api.get<{
-            id: string;
-            email: string;
-            full_name?: string;
-            phone?: string;
-            date_of_birth?: string;
-            gender?: string;
-            avatar_url?: string;
-            created_at: string;
-            updated_at: string;
-          }>(API_ENDPOINTS.auth.profile);
+      const storedRole = localStorage.getItem("user_role") as UserRole;
+      const storedEmail = localStorage.getItem("user_email");
+      const storedName = localStorage.getItem("user_name");
 
-          // Set user data - we need to determine role from somewhere
-          // For now, we'll check localStorage for role or default to patient
-          const storedRole = localStorage.getItem("user_role") as UserRole || "patient";
-
-          setUser({
-            id: userData.id,
-            name: userData.full_name || userData.email.split("@")[0],
-            email: userData.email,
-            role: storedRole,
-            firstName: userData.full_name,
-            lastName: "",
-            profileImage: userData.avatar_url,
-          });
-        } catch (error) {
-          console.error("Auth initialization failed:", error);
-          // Clear invalid token
-          localStorage.removeItem("auth_token");
-          localStorage.removeItem("refresh_token");
-          localStorage.removeItem("user_role");
-        }
+      if (token && storedEmail) {
+        // Simple token check - assume valid if it exists
+        // Real verification happens during API calls
+        setUser({
+          id: "temp", // Will be updated when profile is fetched
+          name: storedName || storedEmail.split("@")[0],
+          email: storedEmail,
+          role: storedRole || "patient",
+          firstName: storedName || "",
+          lastName: "",
+        });
       }
       setIsLoading(false);
     };
@@ -109,11 +89,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (response.session.refresh_token) {
         localStorage.setItem("refresh_token", response.session.refresh_token);
       }
-      // Store user role for session restoration
-      localStorage.setItem("user_role", role);
 
       // Set user data with role from frontend selection (backend doesn't handle roles)
       const fullName = response.user.user_metadata?.full_name;
+      
+      // Store user data for session restoration
+      localStorage.setItem("user_role", role);
+      localStorage.setItem("user_email", response.user.email);
+      localStorage.setItem("user_name", fullName || "");
+      
       setUser({
         id: response.user.id,
         name: fullName || email.split("@")[0],
@@ -244,6 +228,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       localStorage.removeItem("auth_token");
       localStorage.removeItem("refresh_token");
       localStorage.removeItem("user_role");
+      localStorage.removeItem("user_email");
+      localStorage.removeItem("user_name");
       setUser(null);
       setIsLoading(false);
       

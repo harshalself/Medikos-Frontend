@@ -22,7 +22,8 @@ import {
   Plus,
   X,
   MoreVertical,
-  Download
+  Download,
+  Eye
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -41,6 +42,7 @@ const MediVault = () => {
     uploadDocument, 
     fetchDocuments,
     downloadDocument,
+    viewDocument,
     deleteDocument 
   } = useMediVault();
   const [searchQuery, setSearchQuery] = useState("");
@@ -506,6 +508,10 @@ const MediVault = () => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => viewDocument(doc.id, doc.original_filename)}>
+                              <Eye className="w-4 h-4 mr-2" />
+                              View
+                            </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => downloadDocument(doc.id, doc.original_filename)}>
                               <Download className="w-4 h-4 mr-2" />
                               Download

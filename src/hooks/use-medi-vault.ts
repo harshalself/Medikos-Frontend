@@ -147,6 +147,49 @@ export const useMediVault = () => {
     }
   }, [toast]);
 
+  const viewDocument = useCallback(async (documentId: number, filename: string): Promise<void> => {
+    try {
+      // For viewing documents, we need to handle the response as a blob
+      // Make a direct fetch call to get the document
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`${API_BASE_URL}/api/medivault/download/${documentId}`, {
+        headers: {
+          'Authorization': token ? `Bearer ${token}` : '',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const blob = await response.blob();
+
+      // Create a blob URL
+      const url = window.URL.createObjectURL(blob);
+
+      // Open in new tab
+      window.open(url, '_blank');
+
+      // Clean up the blob URL after a delay to ensure the new tab has time to load
+      setTimeout(() => {
+        window.URL.revokeObjectURL(url);
+      }, 1000);
+
+      toast({
+        title: 'Success',
+        description: `Opened ${filename} in new tab`,
+      });
+    } catch (error: any) {
+      console.error('[MediVault] View failed:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to view document',
+        variant: 'destructive',
+      });
+      throw error;
+    }
+  }, [toast]);
+
   return {
     isUploading,
     documents,
@@ -155,6 +198,7 @@ export const useMediVault = () => {
     uploadDocument,
     fetchDocuments,
     downloadDocument,
+    viewDocument,
     deleteDocument,
   };
 };

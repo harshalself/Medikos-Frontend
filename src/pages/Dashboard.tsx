@@ -90,12 +90,12 @@ const Dashboard = () => {
       trendDirection: "stable"
     },
     { 
-      title: "AI Features", 
-      value: "5", 
-      subtitle: "Available Tools",
-      icon: Brain, 
-      color: "from-orange-500 to-red-500",
-      trend: "Ready to explore",
+      title: "Today's Health", 
+      value: isLoading ? "..." : "85%", 
+      subtitle: "Wellness Score",
+      icon: Heart, 
+      color: "from-pink-500 to-rose-500",
+      trend: "Good condition",
       trendDirection: "up"
     },
   ];
