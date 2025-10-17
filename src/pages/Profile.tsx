@@ -335,19 +335,6 @@ const Profile = () => {
           )}
         </div>
       </div>
-      ) : (
-        <div className="min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50 p-8 flex items-center justify-center">
-          <div className="text-center">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-red-500 to-pink-600 mb-6 shadow-xl">
-              <Shield className="w-10 h-10 text-white" />
-            </div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Authentication Required</h2>
-            <p className="text-gray-600 mb-6">Please log in to access your profile.</p>
-            <Button onClick={() => navigate('/login')} className="bg-teal-600 hover:bg-teal-700">
-              Go to Login
-            </Button>
-          </div>
-        </div>
     </AppLayout>
   );
 };
