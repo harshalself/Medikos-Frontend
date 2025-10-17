@@ -41,15 +41,37 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (token) {
         try {
           // Verify token and get user info
-          // This endpoint will be added when you provide backend docs
-          // const userData = await api.get<User>("/api/auth/me");
-          // setUser(userData);
-          
-          // For now, we'll just mark as not loading
-          // The actual user data will be set after successful login
+          const userData = await api.get<{
+            id: string;
+            email: string;
+            full_name?: string;
+            phone?: string;
+            date_of_birth?: string;
+            gender?: string;
+            avatar_url?: string;
+            created_at: string;
+            updated_at: string;
+          }>(API_ENDPOINTS.auth.profile);
+
+          // Set user data - we need to determine role from somewhere
+          // For now, we'll check localStorage for role or default to patient
+          const storedRole = localStorage.getItem("user_role") as UserRole || "patient";
+
+          setUser({
+            id: userData.id,
+            name: userData.full_name || userData.email.split("@")[0],
+            email: userData.email,
+            role: storedRole,
+            firstName: userData.full_name,
+            lastName: "",
+            profileImage: userData.avatar_url,
+          });
         } catch (error) {
           console.error("Auth initialization failed:", error);
+          // Clear invalid token
           localStorage.removeItem("auth_token");
+          localStorage.removeItem("refresh_token");
+          localStorage.removeItem("user_role");
         }
       }
       setIsLoading(false);
@@ -87,6 +109,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (response.session.refresh_token) {
         localStorage.setItem("refresh_token", response.session.refresh_token);
       }
+      // Store user role for session restoration
+      localStorage.setItem("user_role", role);
 
       // Set user data with role from frontend selection (backend doesn't handle roles)
       const fullName = response.user.user_metadata?.full_name;
@@ -219,6 +243,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Clear local state regardless of API call result
       localStorage.removeItem("auth_token");
       localStorage.removeItem("refresh_token");
+      localStorage.removeItem("user_role");
       setUser(null);
       setIsLoading(false);
       

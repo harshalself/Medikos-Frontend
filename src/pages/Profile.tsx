@@ -27,7 +27,7 @@ import {
 
 const Profile = () => {
   const { toast } = useToast();
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -44,14 +44,6 @@ const Profile = () => {
   });
 
   const [isEditing, setIsEditing] = useState(false);
-
-  // Check authentication
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/login');
-      return;
-    }
-  }, [isAuthenticated, navigate]);
 
   // Fetch profile data on component mount
   useEffect(() => {
@@ -94,7 +86,7 @@ const Profile = () => {
     };
 
     fetchProfile();
-  }, [toast, isAuthenticated]);
+  }, [toast]);
 
   const handleSaveProfile = async () => {
     try {
@@ -141,7 +133,6 @@ const Profile = () => {
 
   return (
     <AppLayout>
-      {isAuthenticated ? (
       <div className="min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50 p-8">
         <div className="max-w-4xl mx-auto">
           {/* Hero Section */}
@@ -356,7 +347,6 @@ const Profile = () => {
             </Button>
           </div>
         </div>
-      )}
     </AppLayout>
   );
 };

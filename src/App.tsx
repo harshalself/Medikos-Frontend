@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { NotificationProvider } from "./contexts/NotificationContext";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -40,27 +41,27 @@ const App = () => (
             <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             
             {/* Doctor Portal Routes */}
-            <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
-            <Route path="/doctor/patients" element={<DoctorPatients />} />
-            <Route path="/doctor/patients/:patientId" element={<PatientDetails />} />
-            <Route path="/doctor/diagnosis" element={<DoctorDiagnosis />} />
-            <Route path="/doctor/consultations" element={<DoctorConsultations />} />
-            <Route path="/doctor/analytics" element={<DoctorAnalytics />} />
+            <Route path="/doctor-dashboard" element={<ProtectedRoute><DoctorDashboard /></ProtectedRoute>} />
+            <Route path="/doctor/patients" element={<ProtectedRoute><DoctorPatients /></ProtectedRoute>} />
+            <Route path="/doctor/patients/:patientId" element={<ProtectedRoute><PatientDetails /></ProtectedRoute>} />
+            <Route path="/doctor/diagnosis" element={<ProtectedRoute><DoctorDiagnosis /></ProtectedRoute>} />
+            <Route path="/doctor/consultations" element={<ProtectedRoute><DoctorConsultations /></ProtectedRoute>} />
+            <Route path="/doctor/analytics" element={<ProtectedRoute><DoctorAnalytics /></ProtectedRoute>} />
             
-            <Route path="/admin-dashboard" element={<AdminDashboard />} />
-            <Route path="/remedies" element={<Remedies />} />
-            <Route path="/medivault" element={<MediVault />} />
-            <Route path="/passport" element={<HealthPassport />} />
-            <Route path="/generic-medicine" element={<GenericMedicine />} />
-            <Route path="/disease-prediction" element={<InfectiousDiseasePrediction />} />
-            <Route path="/health-diary" element={<HealthDiary />} />
-            <Route path="/voice-agent" element={<VoiceAgent />} />
-            <Route path="/chatbot" element={<ChatBot />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/admin-dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/remedies" element={<ProtectedRoute><Remedies /></ProtectedRoute>} />
+            <Route path="/medivault" element={<ProtectedRoute><MediVault /></ProtectedRoute>} />
+            <Route path="/passport" element={<ProtectedRoute><HealthPassport /></ProtectedRoute>} />
+            <Route path="/generic-medicine" element={<ProtectedRoute><GenericMedicine /></ProtectedRoute>} />
+            <Route path="/disease-prediction" element={<ProtectedRoute><InfectiousDiseasePrediction /></ProtectedRoute>} />
+            <Route path="/health-diary" element={<ProtectedRoute><HealthDiary /></ProtectedRoute>} />
+            <Route path="/voice-agent" element={<ProtectedRoute><VoiceAgent /></ProtectedRoute>} />
+            <Route path="/chatbot" element={<ProtectedRoute><ChatBot /></ProtectedRoute>} />
+            <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
