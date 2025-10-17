@@ -26,7 +26,7 @@ import {
   Trash2
 } from "lucide-react";
 import { useState, useEffect } from "react";
-import { api } from "@/lib/api";
+import { api, APIError } from "@/lib/api";
 import { API_ENDPOINTS } from "@/lib/api-config";
 import type { HealthPassport as HealthPassportType } from "@/types/api";
 import { Input } from "@/components/ui/input";
@@ -211,21 +211,21 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
     try {
       setCreating(true);
       const createData = {
-        blood_group: formData.blood_group || undefined,
+        blood_group: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].includes(formData.blood_group) ? formData.blood_group : undefined,
         allergies: formData.allergies || undefined,
         chronic_conditions: formData.chronic_conditions || undefined,
         current_medications: formData.current_medications || undefined,
         past_surgeries: formData.past_surgeries || undefined,
         family_history: formData.family_history || undefined,
-        smoking_status: formData.smoking_status || undefined,
-        alcohol_consumption: formData.alcohol_consumption || undefined,
-        exercise_frequency: formData.exercise_frequency || undefined,
+        smoking_status: ['Never', 'Former', 'Current'].includes(formData.smoking_status) ? formData.smoking_status : undefined,
+        alcohol_consumption: ['None', 'Occasional', 'Moderate', 'Heavy'].includes(formData.alcohol_consumption) ? formData.alcohol_consumption : undefined,
+        exercise_frequency: ['Sedentary', 'Light', 'Moderate', 'Active', 'Very Active'].includes(formData.exercise_frequency) ? formData.exercise_frequency : undefined,
         diet_type: formData.diet_type || undefined,
-        height_cm: formData.height_cm ? parseFloat(formData.height_cm) : undefined,
-        weight_kg: formData.weight_kg ? parseFloat(formData.weight_kg) : undefined,
+        height_cm: formData.height_cm ? (isNaN(parseFloat(formData.height_cm)) ? undefined : Math.max(50, Math.min(300, parseFloat(formData.height_cm)))) : undefined,
+        weight_kg: formData.weight_kg ? (isNaN(parseFloat(formData.weight_kg)) ? undefined : Math.max(10, Math.min(500, parseFloat(formData.weight_kg)))) : undefined,
         blood_pressure: formData.blood_pressure || undefined,
-        heart_rate: formData.heart_rate ? parseInt(formData.heart_rate) : undefined,
-        vaccination_status: formData.vaccination_status || undefined,
+        heart_rate: formData.heart_rate ? (isNaN(parseInt(formData.heart_rate)) ? undefined : Math.max(30, Math.min(200, parseInt(formData.heart_rate)))) : undefined,
+        vaccination_status: ['Up to date', 'Partially vaccinated', 'Not vaccinated'].includes(formData.vaccination_status) ? formData.vaccination_status : undefined,
         address_line1: formData.address_line1 || undefined,
         address_line2: formData.address_line2 || undefined,
         city: formData.city || undefined,
@@ -244,13 +244,25 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
         }
       });
 
+      // Check if we have at least some data to send
+      if (Object.keys(createData).length === 0) {
+        toast.error('Please fill in at least one field to create your health passport.');
+        setCreating(false);
+        return;
+      }
+
       const newHealthPassport = await api.post<HealthPassportType>(API_ENDPOINTS.healthPassport.base, createData);
       setHealthPassport(newHealthPassport);
       setShowCreateForm(false);
       toast.success('Health passport created successfully!');
     } catch (err) {
       console.error('Error creating health passport:', err);
-      toast.error('Failed to create health passport. Please try again.');
+      const errorMessage = err instanceof APIError && err.data?.detail 
+        ? Array.isArray(err.data.detail) 
+          ? err.data.detail.map(d => d.msg || d.message).join(', ')
+          : err.data.detail
+        : 'Failed to create health passport. Please try again.';
+      toast.error(errorMessage);
     } finally {
       setCreating(false);
     }

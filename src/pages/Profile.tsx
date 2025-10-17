@@ -151,9 +151,7 @@ const Profile = () => {
               <span className="ml-2 text-gray-600">Loading profile...</span>
             </div>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Profile Information Card */}
-            <Card className="lg:col-span-2 shadow-xl">
+            <Card className="shadow-xl max-w-4xl mx-auto">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
@@ -289,49 +287,6 @@ const Profile = () => {
                 </div>
               </CardContent>
             </Card>
-
-            {/* Account Security Card */}
-            <Card className="shadow-xl">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Shield className="w-5 h-5 text-green-600" />
-                  <span>Account Security</span>
-                </CardTitle>
-                <CardDescription>
-                  Manage your account security and privacy settings
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between p-4 border rounded-lg">
-                  <div>
-                    <h4 className="font-medium">Two-Factor Authentication</h4>
-                    <p className="text-sm text-gray-600">Add an extra layer of security</p>
-                  </div>
-                  <Button variant="outline" size="sm">
-                    Enable
-                  </Button>
-                </div>
-                <div className="flex items-center justify-between p-4 border rounded-lg">
-                  <div>
-                    <h4 className="font-medium">Password</h4>
-                    <p className="text-sm text-gray-600">Last changed 3 months ago</p>
-                  </div>
-                  <Button variant="outline" size="sm">
-                    Change
-                  </Button>
-                </div>
-                <div className="flex items-center justify-between p-4 border rounded-lg">
-                  <div>
-                    <h4 className="font-medium">Privacy Settings</h4>
-                    <p className="text-sm text-gray-600">Control your data visibility</p>
-                  </div>
-                  <Button variant="outline" size="sm">
-                    Manage
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
           )}
         </div>
       </div>
