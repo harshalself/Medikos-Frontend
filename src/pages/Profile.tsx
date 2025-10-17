@@ -86,7 +86,8 @@ const Profile = () => {
     };
 
     fetchProfile();
-  }, [toast]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount
 
   const handleSaveProfile = async () => {
     try {
