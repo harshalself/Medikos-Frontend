@@ -23,7 +23,6 @@ import ChatBot from "./pages/ChatBot";
 import GenericMedicine from "./pages/GenericMedicine";
 import InfectiousDiseasePrediction from "./pages/InfectiousDiseasePrediction";
 import HealthDiary from "./pages/HealthDiary";
-import VoiceAgent from "./pages/VoiceAgent";
 import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
@@ -58,7 +57,6 @@ const App = () => (
             <Route path="/generic-medicine" element={<ProtectedRoute><GenericMedicine /></ProtectedRoute>} />
             <Route path="/disease-prediction" element={<ProtectedRoute><InfectiousDiseasePrediction /></ProtectedRoute>} />
             <Route path="/health-diary" element={<ProtectedRoute><HealthDiary /></ProtectedRoute>} />
-            <Route path="/voice-agent" element={<ProtectedRoute><VoiceAgent /></ProtectedRoute>} />
             <Route path="/chatbot" element={<ProtectedRoute><ChatBot /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />

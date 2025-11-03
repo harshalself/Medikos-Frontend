@@ -1,15 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { MessageCircle, Phone } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 import { Sidebar } from "./Sidebar";
 import { TopNavbar } from "./TopNavbar";
 // Floating components
 import FloatingChatBot from "../floating/FloatingChatBot";
-import FloatingVoiceAgent from "../floating/FloatingVoiceAgent";
 import { useScrollPosition } from "@/hooks/use-scroll-position";
 import { SidebarScrollProvider } from "@/contexts/SidebarScrollContext";
+
+// Declare ElevenLabs custom element
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'elevenlabs-convai': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
+        'agent-id': string;
+      };
+    }
+  }
+}
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -20,8 +30,23 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
   const navigate = useNavigate();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [isVoiceOpen, setIsVoiceOpen] = useState(false);
   const { scrollContainerRef } = useScrollPosition();
+
+  // Load ElevenLabs script
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/@elevenlabs/convai-widget-embed';
+    script.async = true;
+    document.head.appendChild(script);
+
+    return () => {
+      // Cleanup script when component unmounts
+      const existingScript = document.querySelector('script[src="https://unpkg.com/@elevenlabs/convai-widget-embed"]');
+      if (existingScript) {
+        document.head.removeChild(existingScript);
+      }
+    };
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -62,29 +87,14 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
         </div>
 
         {/* Floating Action Buttons */}
-        <div className="fixed bottom-4 right-4 z-[9998] flex flex-col gap-3">
+        <div className="fixed bottom-28 right-8 z-[9998] flex flex-col gap-3">
           {/* Chat Assistant Button */}
           <Button
-            onClick={() => {
-              setIsChatOpen(true);
-              setIsVoiceOpen(false); // Close voice when opening chat
-            }}
+            onClick={() => setIsChatOpen(true)}
             className="w-14 h-14 rounded-full bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700 shadow-lg hover:shadow-xl transition-all duration-300"
             title="Open AI Chat Assistant"
           >
             <MessageCircle className="w-6 h-6 text-white" />
-          </Button>
-
-          {/* Voice Assistant Button */}
-          <Button
-            onClick={() => {
-              setIsVoiceOpen(true);
-              setIsChatOpen(false); // Close chat when opening voice
-            }}
-            className="w-14 h-14 rounded-full bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 shadow-lg hover:shadow-xl transition-all duration-300"
-            title="Open AI Voice Assistant"
-          >
-            <Phone className="w-6 h-6 text-white" />
           </Button>
         </div>
 
@@ -94,11 +104,8 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
           onClose={() => setIsChatOpen(false)} 
         />
 
-        {/* Floating Voice Component */}
-        <FloatingVoiceAgent 
-          isOpen={isVoiceOpen} 
-          onClose={() => setIsVoiceOpen(false)} 
-        />
+        {/* ElevenLabs Conva AI Widget */}
+        <elevenlabs-convai agent-id="agent_5701k93w72nte5xr5hk1ge3758pv"></elevenlabs-convai>
       </div>
     </SidebarScrollProvider>
   );

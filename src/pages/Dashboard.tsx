@@ -27,8 +27,7 @@ import {
   Users,
   Target,
   Zap,
-  AlertCircle,
-  Mic
+  AlertCircle
 } from "lucide-react";
 
 const Dashboard = () => {
@@ -105,7 +104,6 @@ const Dashboard = () => {
     { title: "Smart Health Passport", icon: Shield, path: "/passport", color: "from-blue-500 to-cyan-500" },
     { title: "Generic Medicine Suggester", icon: Pill, path: "/generic-medicine", color: "from-green-500 to-emerald-500" },
     { title: "AI Chatbot", icon: MessageCircle, path: "/chatbot", color: "from-purple-500 to-blue-500" },
-    { title: "AI Voice Call Agent", icon: Mic, path: "/voice-agent", color: "from-rose-500 to-pink-500" },
     { title: "Infectious Disease Prediction", icon: Brain, path: "/infectious-disease-prediction", color: "from-red-500 to-orange-500" },
     { title: "Natural Remedies & Diet", icon: Leaf, path: "/remedies", color: "from-green-500 to-teal-500" },
     { title: "MediVault", icon: FileText, path: "/medivault", color: "from-indigo-500 to-blue-500" },
