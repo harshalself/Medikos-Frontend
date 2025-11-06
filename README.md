@@ -1,273 +1,110 @@
-# Medikos Frontend
+# Medikos - AI-Powered Healthcare Platform
 
-Healthcare platform frontend built with React, TypeScript, and Vite.
+A comprehensive healthcare management platform built with React, TypeScript, and modern web technologies. Medikos provides patients, doctors, and administrators with intelligent healthcare solutions including AI-powered diagnostics, health passport management, and seamless medical record handling.
 
-## Backend Integration Plan
+![Patient Dashboard](./public/Screenshot.png)
 
-### Overview
-This plan outlines the minimal steps required to integrate the React frontend with the backend API running on `http://localhost:8000`.
+## 🚀 Features
 
-### Phase 1: Environment & Configuration Setup
+### For Patients
+- **Smart Health Passport**: Comprehensive health profile with medical history, allergies, and emergency contacts
+- **AI Voice Assistant**: ElevenLabs-powered voice interactions for health consultations
+- **MediVault**: Secure document storage and management for medical records
+- **Health Diary**: Daily health tracking with symptom logging and wellness monitoring
+- **Generic Medicine Suggester**: AI-powered alternative medicine recommendations
+- **Natural Remedies**: Diet and lifestyle advice based on health conditions
 
-#### 1.1 Environment Variables
-**File**: `.env.local` (create new)
-```env
-VITE_API_BASE_URL=http://localhost:8000
-VITE_API_TIMEOUT=30000
-```
+### For Doctors
+- **Patient Management**: Comprehensive patient profiles and medical history access
+- **AI Diagnostics**: Intelligent diagnosis assistance and treatment recommendations
+- **Consultation Management**: Schedule and manage patient appointments
+- **Analytics Dashboard**: Performance metrics and patient care insights
 
-**Why**: Centralize API URL configuration, easy to change for different environments (dev/staging/prod).
+### For Administrators
+- **System Management**: User management, role assignments, and system monitoring
+- **Analytics & Reporting**: Comprehensive healthcare metrics and system usage statistics
 
-#### 1.2 Vite Proxy Configuration
-**File**: `vite.config.ts` (update)
-- Add proxy configuration to avoid CORS issues during development
-- Proxy `/api/*` requests to `http://localhost:8000`
+## 🛠️ Tech Stack
 
-**Why**: Eliminates CORS errors in development, no need for backend CORS configuration.
+- **Frontend**: React 18, TypeScript, Vite
+- **UI Framework**: Radix UI, shadcn/ui, Tailwind CSS
+- **State Management**: React Query, Context API
+- **Routing**: React Router v6
+- **Forms**: React Hook Form, Zod validation
+- **Icons**: Lucide React
+- **AI Integration**: ElevenLabs Voice Assistant
 
----
+## 📦 Installation
 
-### Phase 2: API Layer Setup (Minimal Approach)
-
-#### 2.1 Create API Client
-**File**: `src/lib/api.ts` (create new)
-- Simple fetch wrapper with base URL
-- Handles authentication tokens
-- Error handling in one place
-- Request/response interceptors
-
-**Why**: Single source of truth for all API calls, consistent error handling.
-
-#### 2.2 API Configuration
-**File**: `src/lib/api-config.ts` (create new)
-- Export base URL from environment
-- Export common headers
-- Export API endpoints as constants
-
-**Why**: Type-safe endpoint references, easy to update API routes.
-
----
-
-### Phase 3: Authentication Integration
-
-#### 3.1 Update Auth Context
-**File**: `src/contexts/AuthContext.tsx` (update)
-- Connect login/logout to real API endpoints
-- Store JWT token in localStorage
-- Add token refresh logic
-- Add interceptor to attach token to requests
-
-**Why**: Centralized auth state management, automatic token handling.
-
-#### 3.2 Update Login Page
-**File**: `src/pages/Login.tsx` (update)
-- Connect form submission to API
-- Handle loading and error states
-- Redirect on successful login
-
-**Why**: Real authentication instead of mock data.
-
----
-
-### Phase 4: API Hooks (React Query)
-
-#### 4.1 Create Custom Hooks
-**Files**: `src/hooks/api/` (create new directory)
-- `useAuth.ts` - Login, logout, register
-- `usePatients.ts` - Patient CRUD operations
-- `useAppointments.ts` - Appointment management
-- `useDoctors.ts` - Doctor data
-- `useHealthRecords.ts` - Health records and diaries
-
-**Why**: React Query handles caching, loading states, refetching automatically.
-
-#### 4.2 Query Client Setup
-**File**: `src/main.tsx` (update)
-- Already has `@tanstack/react-query` installed
-- Configure default options (retry, staleTime, cacheTime)
-
-**Why**: Optimize API calls, reduce unnecessary requests.
-
----
-
-### Phase 5: Gradual Page Migration
-
-#### 5.1 Priority Order (migrate one at a time)
-1. **Login Page** - Authentication first
-2. **Dashboard** - Overview data
-3. **Appointments** - Core functionality
-4. **Health Diary** - User input/output
-5. **Doctor Pages** - Doctor-specific features
-6. **Admin Dashboard** - Admin features
-
-**Why**: Incremental approach reduces risk, easier to test.
-
-#### 5.2 Migration Pattern per Page
-For each page:
-- Replace mock data with API hook
-- Add loading skeletons
-- Add error boundaries
-- Update form submissions to API calls
-
-**Why**: Consistent implementation across all pages.
-
----
-
-### Phase 6: Error Handling & Loading States
-
-#### 6.1 Global Error Handler
-**File**: `src/components/ErrorBoundary.tsx` (create new)
-- Catch and display API errors
-- Provide retry functionality
-
-#### 6.2 Loading Components
-**Files**: `src/components/ui/` (use existing)
-- Use existing `skeleton.tsx` for loading states
-- Add `LoadingSpinner` component if needed
-
-**Why**: Better UX during API calls.
-
----
-
-### File Structure Summary
-
-```
-src/
-├── lib/
-│   ├── api.ts              # API client (fetch wrapper)
-│   ├── api-config.ts       # API endpoints & config
-│   └── utils.ts            # (existing)
-├── hooks/
-│   └── api/
-│       ├── useAuth.ts
-│       ├── usePatients.ts
-│       ├── useAppointments.ts
-│       ├── useDoctors.ts
-│       └── useHealthRecords.ts
-├── contexts/
-│   ├── AuthContext.tsx     # (update for real API)
-│   └── ...
-├── components/
-│   ├── ErrorBoundary.tsx   # (create)
-│   └── ...
-└── pages/
-    └── ...                 # (update gradually)
-```
-
----
-
-### Implementation Checklist
-
-- [ ] Create `.env.local` file
-- [ ] Update `vite.config.ts` with proxy
-- [ ] Create `src/lib/api.ts` (API client)
-- [ ] Create `src/lib/api-config.ts` (endpoints)
-- [ ] Update `AuthContext.tsx` for real API
-- [ ] Update `Login.tsx` page
-- [ ] Create API hooks in `src/hooks/api/`
-- [ ] Create `ErrorBoundary.tsx`
-- [ ] Migrate Dashboard page
-- [ ] Migrate Appointments page
-- [ ] Migrate Health Diary page
-- [ ] Migrate Doctor pages
-- [ ] Migrate Admin Dashboard
-- [ ] Test all features end-to-end
-- [ ] Add proper error messages
-- [ ] Add loading states everywhere
-
----
-
-### Estimated Lines of Code
-
-| Component | Estimated LOC |
-|-----------|---------------|
-| API Client | ~100 lines |
-| API Config | ~50 lines |
-| Auth Context Updates | ~50 lines |
-| API Hooks (all) | ~300 lines |
-| Error Boundary | ~40 lines |
-| Page Updates | ~500 lines total |
-| **Total** | **~1040 lines** |
-
----
-
-### Benefits of This Approach
-
-1. **Minimal Code**: Reusing existing components and libraries
-2. **Type Safety**: TypeScript ensures API contracts
-3. **Automatic Caching**: React Query handles it
-4. **Error Handling**: Centralized and consistent
-5. **Easy Testing**: Hooks can be mocked easily
-6. **Gradual Migration**: No big bang deployment
-7. **Developer Experience**: Hot reload, type hints, autocomplete
-
----
-
-## Development Setup
-
-### Prerequisites
-- Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-- Backend API running on `http://localhost:8000`
-
-### Installation
-
-```sh
+```bash
 # Clone the repository
-git clone <YOUR_GIT_URL>
+git clone <repository-url>
 
-# Navigate to the project directory
+# Navigate to project directory
 cd Medikos-Frontend
 
 # Install dependencies
-npm i
+npm install
 
 # Create environment file
 cp .env.example .env.local
-# Edit .env.local with your backend URL
 
 # Start development server
 npm run dev
 ```
 
-### Available Scripts
+## ⚙️ Environment Setup
 
-- `npm run dev` - Start development server (http://localhost:8080)
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
+Create a `.env.local` file with:
 
----
+```env
+VITE_API_BASE_URL=http://localhost:8000
+VITE_API_TIMEOUT=30000
+```
 
-## Tech Stack
+## 🏗️ Build & Development
 
-- **Framework**: React 18 + TypeScript
-- **Build Tool**: Vite
-- **UI Components**: Radix UI + shadcn/ui
-- **Styling**: Tailwind CSS
-- **State Management**: React Query + Context API
-- **Routing**: React Router
-- **Forms**: React Hook Form + Zod
-- **Icons**: Lucide React
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+```bash
+# Development
+npm run dev
 
-## What technologies are used for this project?
+# Build for production
+npm run build
 
-This project is built with:
+# Preview production build
+npm run preview
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+# Lint code
+npm run lint
+```
 
-## How can I deploy this project?
+##  API Integration
 
-Simply open [Lovable](https://lovable.dev/projects/eb7be595-26e2-4f4f-b11b-e6021d001a43) and click on Share -> Publish.
+The frontend integrates with a FastAPI backend running on `http://localhost:8000`. Key endpoints include:
 
-## Can I connect a custom domain to my Lovable project?
+- `/api/auth/*` - Authentication and user management
+- `/api/health-passport/*` - Health profile management
+- `/api/medivault/*` - Document storage and retrieval
+- `/api/health-diary/*` - Health tracking and logging
 
-Yes, you can!
+## 🤝 Contributing
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👥 Authors
+
+- **Harshal Patil** - *Initial work* - [harshalself](https://github.com/harshalself)
+
+## 🙏 Acknowledgments
+
+- Built with [shadcn/ui](https://ui.shadcn.com/) components
+- Voice assistant powered by [ElevenLabs](https://elevenlabs.io/)
+- Icons by [Lucide React](https://lucide.dev/)
