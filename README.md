@@ -2,7 +2,7 @@
 
 A comprehensive healthcare management platform built with React, TypeScript, and modern web technologies. Medikos provides patients, doctors, and administrators with intelligent healthcare solutions including AI-powered diagnostics, health passport management, and seamless medical record handling.
 
-![Patient Dashboard](./public/Screenshot.png)
+![Patient Dashboard](./public/Screenshot-1.png)
 
 ## 🚀 Features
 

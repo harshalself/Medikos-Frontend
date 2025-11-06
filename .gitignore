@@ -72,7 +72,14 @@ dist
 
 # Gatsby files
 .cache/
-public
+# public
+
+# Allow specific files in public folder
+!public/Screenshot-1.png
+!public/favicon.ico
+!public/medikos-logo.png
+!public/placeholder.svg
+!public/robots.txt
 
 # Storybook build outputs
 .out
