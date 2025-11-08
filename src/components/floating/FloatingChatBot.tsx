@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { useAskChatbot } from "@/hooks/use-ask-chatbot";
 import { 
   MessageCircle, 
   X, 
@@ -10,7 +11,8 @@ import {
   Bot,
   AlertTriangle,
   Lightbulb,
-  Clock
+  Clock,
+  Sparkles
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -20,6 +22,7 @@ interface Message {
   isBot: boolean;
   timestamp: Date;
   type?: 'info' | 'warning' | 'suggestion';
+  suggestions?: string[];
 }
 
 interface FloatingChatBotProps {
@@ -30,11 +33,12 @@ interface FloatingChatBotProps {
 const FloatingChatBot = ({ isOpen, onClose }: FloatingChatBotProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { askQuestion, loading: apiLoading, error: apiError } = useAskChatbot();
 
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: "Hello! I'm your AI Health Assistant. I can help you with health information, symptom analysis, and dietary recommendations. How can I assist you today?",
+      content: "Hello! I'm your AI Health Assistant powered by RAG technology. I can help you with health information, symptom analysis, and dietary recommendations based on verified medical data. How can I assist you today?",
       isBot: true,
       timestamp: new Date(),
       type: 'info'
@@ -68,26 +72,22 @@ const FloatingChatBot = ({ isOpen, onClose }: FloatingChatBotProps) => {
     }
   }, [isOpen]);
 
-  const quickQuestions = [
-    "I have a headache, what should I do?",
-    "Natural remedies for common cold",
-    "Healthy diet for diabetes",
-    "How to improve my sleep quality?",
-    "Stress management techniques"
-  ];
-
-  const handleSendMessage = async () => {
-    if (!inputMessage.trim()) return;
+  const handleSendMessage = async (messageToSend?: string) => {
+    const message = messageToSend || inputMessage;
+    if (!message.trim()) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
-      content: inputMessage,
+      content: message,
       isBot: false,
       timestamp: new Date()
     };
 
     setMessages(prev => [...prev, userMessage]);
-    setInputMessage("");
+    const currentQuery = message;
+    if (!messageToSend) {
+      setInputMessage("");
+    }
     setIsTyping(true);
 
     // Keep input focused after sending
@@ -95,76 +95,45 @@ const FloatingChatBot = ({ isOpen, onClose }: FloatingChatBotProps) => {
       inputRef.current?.focus();
     }, 100);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const botResponse = generateBotResponse(inputMessage);
-      setMessages(prev => [...prev, botResponse]);
-      setIsTyping(false);
+    try {
+      // Call the real API endpoint on port 8002
+      const response = await askQuestion(currentQuery);
       
-      // Focus input again after bot response
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 100);
-    }, 1500);
-  };
+      const botResponse: Message = {
+        id: Date.now().toString(),
+        content: response.answer,
+        isBot: true,
+        timestamp: new Date(),
+        type: 'info',
+        suggestions: response.suggestions
+      };
 
-  const generateBotResponse = (userInput: string): Message => {
-    const input = userInput.toLowerCase();
-    
-    if (input.includes("headache")) {
-      return {
+      setMessages(prev => [...prev, botResponse]);
+    } catch (error) {
+      // Show error message in chat
+      const errorMessage: Message = {
         id: Date.now().toString(),
-        content: "For headaches, I recommend:\n\n• Stay hydrated - drink water\n• Rest in a quiet, dark room\n• Apply cold compress to forehead\n• Consider gentle neck stretches\n• Try ginger tea for natural relief\n\n⚠️ If severe or persistent, consult a doctor immediately.",
-        isBot: true,
-        timestamp: new Date(),
-        type: 'suggestion'
-      };
-    } else if (input.includes("cold") || input.includes("cough")) {
-      return {
-        id: Date.now().toString(),
-        content: "Natural remedies for common cold:\n\n• Honey and ginger tea\n• Steam inhalation\n• Garlic and turmeric paste\n• Warm salt water gargling\n• Increase vitamin C intake\n• Get plenty of rest\n\n💡 These symptoms usually resolve in 7-10 days.",
-        isBot: true,
-        timestamp: new Date(),
-        type: 'info'
-      };
-    } else if (input.includes("diabetes") || input.includes("sugar")) {
-      return {
-        id: Date.now().toString(),
-        content: "Diabetes-friendly diet tips:\n\n• Choose complex carbohydrates\n• Include fiber-rich foods\n• Opt for lean proteins\n• Healthy fats like nuts, avocado\n• Regular meal timing\n• Monitor blood sugar levels\n\n⚠️ Always consult your doctor for personalized diet plans.",
+        content: "I apologize, but I'm having trouble connecting to the health database. Please make sure the chatbot service is running on port 8002 and try again.",
         isBot: true,
         timestamp: new Date(),
         type: 'warning'
       };
-    } else if (input.includes("sleep")) {
-      return {
-        id: Date.now().toString(),
-        content: "Tips for better sleep quality:\n\n• Maintain regular sleep schedule\n• Create a relaxing bedtime routine\n• Limit screen time before bed\n• Keep bedroom cool and dark\n• Try chamomile tea\n• Practice deep breathing\n\n💡 Aim for 7-9 hours of sleep nightly.",
-        isBot: true,
-        timestamp: new Date(),
-        type: 'suggestion'
-      };
-    } else if (input.includes("stress")) {
-      return {
-        id: Date.now().toString(),
-        content: "Stress management techniques:\n\n• Practice mindfulness meditation\n• Regular physical exercise\n• Deep breathing exercises\n• Connect with friends and family\n• Engage in hobbies\n• Consider yoga or tai chi\n\n💡 Chronic stress can affect physical health - seek professional help if needed.",
-        isBot: true,
-        timestamp: new Date(),
-        type: 'suggestion'
-      };
-    } else {
-      return {
-        id: Date.now().toString(),
-        content: "Thank you for your question! I'm here to help with health-related queries. You can ask me about:\n\n• Common health symptoms\n• Natural remedies\n• Diet and nutrition\n• Exercise and wellness\n• Stress management\n\nFor serious medical concerns, please consult a healthcare professional.",
-        isBot: true,
-        timestamp: new Date(),
-        type: 'info'
-      };
+      
+      setMessages(prev => [...prev, errorMessage]);
+      
+      toast({
+        title: "Connection Error",
+        description: "Unable to reach the AI chatbot service. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsTyping(false);
+      
+      // Focus input again after response
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
     }
-  };
-
-  const handleQuickQuestion = (question: string) => {
-    setInputMessage(question);
-    setTimeout(() => handleSendMessage(), 100);
   };
 
   const getMessageIcon = (type?: string) => {
@@ -180,8 +149,8 @@ const FloatingChatBot = ({ isOpen, onClose }: FloatingChatBotProps) => {
 
   return (
     <div className="fixed bottom-24 right-2 sm:right-6 z-[9999]">
-      {/* Main Chat Window */}
-      <Card className="w-80 sm:w-96 h-[380px] bg-white shadow-2xl border-2 border-primary/10 overflow-hidden animate-fade-in flex flex-col">
+      {/* Main Chat Window - Increased height from 380px to 550px */}
+      <Card className="w-96 sm:w-[480px] h-[650px] bg-white shadow-2xl border-2 border-primary/10 overflow-hidden animate-fade-in flex flex-col">
         {/* Shimmer Effect */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-slide-left pointer-events-none"></div>
         
@@ -191,11 +160,7 @@ const FloatingChatBot = ({ isOpen, onClose }: FloatingChatBotProps) => {
             <div className="flex items-center space-x-2">
               <MessageCircle className="w-5 h-5" />
               <div>
-                <CardTitle className="text-sm font-semibold">AI Health Assistant</CardTitle>
-                <div className="flex items-center text-xs text-purple-100">
-                  <div className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></div>
-                  Online & Ready to Help
-                </div>
+                <CardTitle className="text-sm font-semibold">diagno-chatbot</CardTitle>
               </div>
             </div>
             <div className="flex items-center gap-1">
@@ -242,17 +207,31 @@ const FloatingChatBot = ({ isOpen, onClose }: FloatingChatBotProps) => {
                   <div className="text-sm whitespace-pre-wrap leading-relaxed">
                     {message.content}
                   </div>
-                  <div className={`text-xs mt-1 ${
-                    message.isBot ? 'text-gray-500' : 'text-purple-100'
-                  }`}>
-                    {message.timestamp.toLocaleTimeString([], { 
-                      hour: '2-digit', 
-                      minute: '2-digit' 
-                    })}
-                  </div>
+                  
+                  {/* Display suggestions if available */}
+                  {message.isBot && message.suggestions && message.suggestions.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-gray-200">
+                      <div className="flex items-center gap-1 mb-2">
+                        <Sparkles className="w-3 h-3 text-purple-500" />
+                        <span className="text-xs font-semibold text-gray-700">Suggested follow-ups:</span>
+                      </div>
+                      <div className="space-y-1.5">
+                        {message.suggestions.map((suggestion, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => handleSendMessage(suggestion)}
+                            className="w-full text-left text-xs bg-purple-50 hover:bg-purple-100 text-purple-700 rounded px-2 py-1.5 transition-colors border border-purple-200 hover:border-purple-300"
+                          >
+                            {suggestion}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
+            
             
             {isTyping && (
               <div className="flex justify-start animate-fade-in">
@@ -272,29 +251,6 @@ const FloatingChatBot = ({ isOpen, onClose }: FloatingChatBotProps) => {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Quick Questions */}
-          <div className="border-t p-2 bg-gray-50 flex-shrink-0">
-            <p className="text-xs font-medium text-gray-600 mb-1 flex items-center gap-1">
-              <Lightbulb className="w-3 h-3" />
-              Quick Questions:
-            </p>
-            <div className="overflow-x-auto scrollbar-hide">
-              <div className="flex gap-2 min-w-max">
-                {quickQuestions.map((question, index) => (
-                  <Button
-                    key={index}
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleQuickQuestion(question)}
-                    className="text-xs h-5 px-2 border-primary/30 text-primary hover:bg-primary/10 whitespace-nowrap flex-shrink-0"
-                  >
-                    {question}
-                  </Button>
-                ))}
-              </div>
-            </div>
-          </div>
-
           {/* Input Area */}
           <div className="px-3 py-2 border-t bg-white flex-shrink-0">
             <div className="flex gap-2">
@@ -308,7 +264,7 @@ const FloatingChatBot = ({ isOpen, onClose }: FloatingChatBotProps) => {
                 disabled={isTyping}
               />
               <Button
-                onClick={handleSendMessage}
+                onClick={() => handleSendMessage()}
                 disabled={!inputMessage.trim() || isTyping}
                 size="sm"
                 className="bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700"
