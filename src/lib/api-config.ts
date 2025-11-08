@@ -43,9 +43,13 @@ export const API_ENDPOINTS = {
     lifestyle: '/api/health-passport/lifestyle',
     address: '/api/health-passport/address',
     emergency: '/api/health-passport/emergency',
+    // Doctor endpoints for viewing patient health passports
+    viewPatient: (userId: number) => `/api/health-passport/user/${userId}`,
   },
   medicineSuggester: {
     suggestAlternatives: '/api/medicine-suggester/suggest-alternatives',
+    // Doctor endpoints for viewing patient medicine history
+    doctorHistory: '/api/medicine-suggester/doctor/medicine-history',
   },
   medivault: {
     upload: '/api/medivault/upload',
@@ -55,12 +59,17 @@ export const API_ENDPOINTS = {
   },
   remediesSuggestion: {
     suggest: '/api/remedies-suggestion/suggest',
+    // Doctor endpoints for viewing patient remedies search history
+    doctorUserSearches: (userId: string) => `/api/remedies-suggestion/doctor/user-searches/${userId}`,
   },
   healthDiary: {
     create: '/api/health-diary',
     list: '/api/health-diary',
     delete: (entryId: string) => `/api/health-diary/${entryId}`,
     summary: '/api/health-diary/summary',
+    // Doctor endpoints for viewing patient health diary
+    doctorPatientEntries: (userId: string) => `/api/health-diary/doctor/patient/${userId}`,
+    doctorPatientSummary: (userId: string) => `/api/health-diary/doctor/patient/${userId}/summary`,
   },
 } as const;
 

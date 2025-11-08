@@ -73,13 +73,6 @@ const Landing = () => {
       bgGlow: "bg-purple-500/10",
     },
     {
-      icon: Mic,
-      title: "AI Voice Call Agent",
-      description: "Hands-free health consultations and voice-activated medical assistance",
-      color: "from-rose-500 via-pink-400 to-purple-500",
-      bgGlow: "bg-rose-500/10",
-    },
-    {
       icon: AlertTriangle,
       title: "Infectious Disease Prediction",
       description: "Early detection and prevention of infectious diseases through advanced analytics",

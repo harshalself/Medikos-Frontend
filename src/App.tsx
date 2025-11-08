@@ -15,6 +15,11 @@ import DoctorDiagnosis from "./pages/DoctorDiagnosis";
 import DoctorConsultations from "./pages/DoctorConsultations";
 import DoctorAnalytics from "./pages/DoctorAnalytics";
 import PatientDetails from "./pages/PatientDetails";
+import PatientFeatureView from "./pages/doctor/PatientFeatureView";
+import DoctorPatientHealthPassport from "./pages/doctor/DoctorPatientHealthPassport";
+import DoctorPatientMedicineHistory from "./pages/doctor/DoctorPatientMedicineHistory";
+import DoctorPatientRemediesHistory from "./pages/doctor/DoctorPatientRemediesHistory";
+import DoctorPatientHealthDiary from "./pages/doctor/DoctorPatientHealthDiary";
 import Remedies from "./pages/Remedies";
 import MediVault from "./pages/MediVault";
 import HealthPassport from "./pages/HealthPassport";
@@ -43,7 +48,11 @@ const App = () => (
             {/* Doctor Portal Routes */}
             <Route path="/doctor-dashboard" element={<ProtectedRoute><DoctorDashboard /></ProtectedRoute>} />
             <Route path="/doctor/patients" element={<ProtectedRoute><DoctorPatients /></ProtectedRoute>} />
-            <Route path="/doctor/patients/:patientId" element={<ProtectedRoute><PatientDetails /></ProtectedRoute>} />
+            <Route path="/doctor/patients/:patientId" element={<ProtectedRoute><PatientFeatureView /></ProtectedRoute>} />
+            <Route path="/doctor/patients/:patientId/health-passport" element={<ProtectedRoute><DoctorPatientHealthPassport /></ProtectedRoute>} />
+            <Route path="/doctor/patients/:patientId/medicine-history" element={<ProtectedRoute><DoctorPatientMedicineHistory /></ProtectedRoute>} />
+            <Route path="/doctor/patients/:patientId/remedies-history" element={<ProtectedRoute><DoctorPatientRemediesHistory /></ProtectedRoute>} />
+            <Route path="/doctor/patients/:patientId/health-diary" element={<ProtectedRoute><DoctorPatientHealthDiary /></ProtectedRoute>} />
             <Route path="/doctor/diagnosis" element={<ProtectedRoute><DoctorDiagnosis /></ProtectedRoute>} />
             <Route path="/doctor/consultations" element={<ProtectedRoute><DoctorConsultations /></ProtectedRoute>} />
             <Route path="/doctor/analytics" element={<ProtectedRoute><DoctorAnalytics /></ProtectedRoute>} />
