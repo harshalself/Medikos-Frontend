@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { api } from '@/lib/api';
-import { API_BASE_URL } from '@/lib/api-config';
+import { API_BASE_URL, API_ENDPOINTS } from '@/lib/api-config';
 import { useToast } from '@/hooks/use-toast';
 
 export interface MediVaultDocument {
@@ -39,7 +39,7 @@ export const useMediVault = () => {
         formData.append('description', request.description);
       }
 
-      const response = await api.upload<MediVaultDocument>('/api/medivault/upload', formData);
+      const response = await api.upload<MediVaultDocument>(API_ENDPOINTS.medivault.upload, formData);
 
       toast({
         title: 'Success',
@@ -62,7 +62,7 @@ export const useMediVault = () => {
   const fetchDocuments = useCallback(async (limit: number = 50, offset: number = 0): Promise<DocumentListResponse> => {
     setIsLoadingDocuments(true);
     try {
-      const response = await api.get<DocumentListResponse>(`/api/medivault/documents?limit=${limit}&offset=${offset}`);
+      const response = await api.get<DocumentListResponse>(`${API_ENDPOINTS.medivault.documents}?limit=${limit}&offset=${offset}`);
       
       setDocuments(response.documents);
       setTotalDocuments(response.total);
@@ -85,7 +85,7 @@ export const useMediVault = () => {
       // For file downloads, we need to handle the response as a blob
       // Since the API client expects JSON, we'll make a direct fetch call
       const token = localStorage.getItem('auth_token');
-      const response = await fetch(`${API_BASE_URL}/api/medivault/download/${documentId}`, {
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.medivault.download(documentId)}`, {
         headers: {
           'Authorization': token ? `Bearer ${token}` : '',
         },
@@ -126,7 +126,7 @@ export const useMediVault = () => {
 
   const deleteDocument = useCallback(async (documentId: number): Promise<void> => {
     try {
-      await api.delete(`/api/medivault/${documentId}`);
+      await api.delete(API_ENDPOINTS.medivault.delete(documentId));
 
       // Remove the document from local state
       setDocuments(prev => prev.filter(doc => doc.id !== documentId));
@@ -152,7 +152,7 @@ export const useMediVault = () => {
       // For viewing documents, we need to handle the response as a blob
       // Make a direct fetch call to get the document
       const token = localStorage.getItem('auth_token');
-      const response = await fetch(`${API_BASE_URL}/api/medivault/download/${documentId}`, {
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.medivault.download(documentId)}`, {
         headers: {
           'Authorization': token ? `Bearer ${token}` : '',
         },

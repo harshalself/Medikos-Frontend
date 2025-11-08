@@ -34,7 +34,6 @@ export const API_ENDPOINTS = {
     base: '/api/health-passport',
     exists: '/api/health-passport/exists',
     basic: '/api/health-passport/basic',
-    medical: '/api/health-passport/medical',
     vitals: '/api/health-passport/vitals',
     lifestyle: '/api/health-passport/lifestyle',
     address: '/api/health-passport/address',
@@ -47,22 +46,16 @@ export const API_ENDPOINTS = {
     upload: '/api/medivault/upload',
     documents: '/api/medivault/documents',
     download: (documentId: number) => `/api/medivault/download/${documentId}`,
-    update: (documentId: number) => `/api/medivault/${documentId}`,
     delete: (documentId: number) => `/api/medivault/${documentId}`,
   },
   remediesSuggestion: {
     suggest: '/api/remedies-suggestion/suggest',
   },
   healthDiary: {
-    base: '/api/health-diary',
     create: '/api/health-diary',
     list: '/api/health-diary',
-    detail: (entryId: string) => `/api/health-diary/${entryId}`,
-    update: (entryId: string) => `/api/health-diary/${entryId}`,
     delete: (entryId: string) => `/api/health-diary/${entryId}`,
-    byDate: (date: string) => `/api/health-diary/by-date/${date}`,
-    dateRange: '/api/health-diary/date-range/',
-    stats: '/api/health-diary/stats/count',
+    summary: '/api/health-diary/summary',
   },
 } as const;
 

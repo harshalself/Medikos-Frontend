@@ -76,7 +76,7 @@ export const useHealthDiary = () => {
   const deleteEntry = useCallback(async (entryId: string): Promise<void> => {
     setIsDeleting(true);
     try {
-      await api.delete(`${API_ENDPOINTS.healthDiary.list}/${entryId}`);
+      await api.delete(API_ENDPOINTS.healthDiary.delete(entryId));
 
       // Remove the entry from local state
       setEntries(prev => prev.filter(entry => entry.id !== entryId));
@@ -104,7 +104,7 @@ export const useHealthDiary = () => {
   const fetchHealthSummary = useCallback(async (): Promise<HealthSummary> => {
     setIsFetchingSummary(true);
     try {
-      const response = await api.get<HealthSummary>(`${API_ENDPOINTS.healthDiary.list}/summary`);
+      const response = await api.get<HealthSummary>(API_ENDPOINTS.healthDiary.summary);
 
       setHealthSummary(response);
 
