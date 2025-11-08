@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Heart, Users, Stethoscope, User, Loader2, AlertCircle, Lock } from "lucide-react";
 import { useAuth, UserRole } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
@@ -18,6 +19,8 @@ const Login = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [gender, setGender] = useState("");
   const [selectedRole, setSelectedRole] = useState<UserRole>("patient");
   const [localError, setLocalError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -59,10 +62,31 @@ const Login = () => {
         setLocalError("Please enter your full name!");
         return;
       }
+      if (!phoneNumber.trim()) {
+        setLocalError("Please enter your phone number!");
+        return;
+      }
+      if (!dateOfBirth) {
+        setLocalError("Please select your date of birth!");
+        return;
+      }
+      if (!gender) {
+        setLocalError("Please select your gender!");
+        return;
+      }
       
       // Signup
       try {
-        await signup(email, password, fullName);
+        await signup(email, password, fullName, selectedRole, phoneNumber, dateOfBirth, gender);
+        
+        // Clear form after successful signup
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+        setFullName("");
+        setPhoneNumber("");
+        setDateOfBirth("");
+        setGender("");
         
         // After successful signup, navigate to login
         setIsLogin(true);
@@ -79,14 +103,11 @@ const Login = () => {
     
     // Login
     try {
-      await login(email, password, selectedRole);
+      await login(email, password);
       
-      // Navigate based on role
-      if (selectedRole === "doctor") {
-        navigate("/doctor-dashboard");
-      } else {
-        navigate("/dashboard");
-      }
+      // Backend determines the role, navigate after we have user data
+      // The navigation will be handled by checking the user role from backend
+      navigate("/dashboard");
     } catch (err) {
       // Error is handled by AuthContext
       console.error("Login error:", err);
@@ -105,7 +126,7 @@ const Login = () => {
 
       {/* Content */}
       <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-4xl">
           {/* Logo and Brand */}
           <div className="text-center mb-8 animate-fade-in">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white backdrop-blur-sm mb-4 p-3">
@@ -144,114 +165,169 @@ const Login = () => {
                   </Alert>
                 )}
                 
-                <div className="space-y-2">
-                  <Label htmlFor="role" className="text-sm font-semibold">{isLogin ? "Login As" : "Register As"}</Label>
-                  <div className="grid grid-cols-2 gap-3">
-                    <Button
-                      type="button"
-                      variant={selectedRole === "patient" ? "default" : "outline"}
-                      className={`h-24 flex flex-col items-center justify-center card-hover transition-all duration-300 ${
-                        selectedRole === "patient" ? "bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg" : ""
-                      }`}
-                      onClick={() => setSelectedRole("patient")}
-                    >
-                      <User className="w-8 h-8 mb-2" />
-                      <span className="text-sm font-medium">Patient</span>
-                    </Button>
-                    <Button
-                      type="button"
-                      variant={selectedRole === "doctor" ? "default" : "outline"}
-                      className={`h-24 flex flex-col items-center justify-center card-hover transition-all duration-300 ${
-                        selectedRole === "doctor" ? "bg-gradient-to-br from-blue-500 to-cyan-600 shadow-lg" : ""
-                      }`}
-                      onClick={() => setSelectedRole("doctor")}
-                    >
-                      <Stethoscope className="w-8 h-8 mb-2" />
-                      <span className="text-sm font-medium">Doctor</span>
-                    </Button>
+                {/* Role Selection - Only shown for Signup, Login role is managed by backend */}
+                {!isLogin && (
+                  <div className="space-y-2">
+                    <Label htmlFor="role" className="text-sm font-semibold">Register As</Label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Button
+                        type="button"
+                        variant={selectedRole === "patient" ? "default" : "outline"}
+                        className={`h-24 flex flex-col items-center justify-center card-hover transition-all duration-300 ${
+                          selectedRole === "patient" ? "bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg" : ""
+                        }`}
+                        onClick={() => setSelectedRole("patient")}
+                      >
+                        <User className="w-8 h-8 mb-2" />
+                        <span className="text-sm font-medium">Patient</span>
+                      </Button>
+                      <Button
+                        type="button"
+                        variant={selectedRole === "doctor" ? "default" : "outline"}
+                        className={`h-24 flex flex-col items-center justify-center card-hover transition-all duration-300 ${
+                          selectedRole === "doctor" ? "bg-gradient-to-br from-blue-500 to-cyan-600 shadow-lg" : ""
+                        }`}
+                        onClick={() => setSelectedRole("doctor")}
+                      >
+                        <Stethoscope className="w-8 h-8 mb-2" />
+                        <span className="text-sm font-medium">Doctor</span>
+                      </Button>
+                    </div>
                   </div>
-                </div>
+                )}
                 
                 {/* Additional fields for signup */}
                 {!isLogin && (
+                  <div className="space-y-4">
+                    {/* Row 1: Full Name and Phone Number */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="fullName">Full Name</Label>
+                        <Input
+                          id="fullName"
+                          type="text"
+                          placeholder="Enter your full name"
+                          value={fullName}
+                          onChange={(e) => setFullName(e.target.value)}
+                          required
+                          className="transition-all duration-300 focus:shadow-medical"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="phoneNumber">Phone Number</Label>
+                        <Input
+                          id="phoneNumber"
+                          type="tel"
+                          placeholder="Enter your phone number"
+                          value={phoneNumber}
+                          onChange={(e) => setPhoneNumber(e.target.value)}
+                          required
+                          className="transition-all duration-300 focus:shadow-medical"
+                        />
+                      </div>
+                    </div>
+                    
+                    {/* Row 2: Date of Birth and Gender */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="dateOfBirth">Date of Birth</Label>
+                        <Input
+                          id="dateOfBirth"
+                          type="date"
+                          value={dateOfBirth}
+                          onChange={(e) => setDateOfBirth(e.target.value)}
+                          required
+                          className="transition-all duration-300 focus:shadow-medical"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="gender">Gender</Label>
+                        <Select onValueChange={setGender} value={gender}>
+                          <SelectTrigger className="transition-all duration-300 focus:shadow-medical">
+                            <SelectValue placeholder="Select your gender" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="male">Male</SelectItem>
+                            <SelectItem value="female">Female</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    
+                    {/* Row 3: Email (full width) */}
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="Enter your email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        className="transition-all duration-300 focus:shadow-medical"
+                      />
+                    </div>
+                    
+                    {/* Row 4: Password and Confirm Password */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="password">Password</Label>
+                        <Input
+                          id="password"
+                          type="password"
+                          placeholder="Create a password (min 8 characters)"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          required
+                          minLength={8}
+                          className="transition-all duration-300 focus:shadow-medical"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="confirmPassword">Confirm Password</Label>
+                        <Input
+                          id="confirmPassword"
+                          type="password"
+                          placeholder="Confirm your password"
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          required
+                          className="transition-all duration-300 focus:shadow-medical"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Login fields */}
+                {isLogin && (
                   <>
                     <div className="space-y-2">
-                      <Label htmlFor="fullName">Full Name</Label>
+                      <Label htmlFor="email">Email</Label>
                       <Input
-                        id="fullName"
-                        type="text"
-                        placeholder="Enter your full name"
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
+                        id="email"
+                        type="email"
+                        placeholder="Enter your email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         required
                         className="transition-all duration-300 focus:shadow-medical"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="phoneNumber">Phone Number</Label>
+                      <Label htmlFor="password">Password</Label>
                       <Input
-                        id="phoneNumber"
-                        type="tel"
-                        placeholder="Enter your phone number"
-                        value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        id="password"
+                        type="password"
+                        placeholder="Enter your password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         required
                         className="transition-all duration-300 focus:shadow-medical"
                       />
                     </div>
                   </>
-                )}
-                
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="transition-all duration-300 focus:shadow-medical"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder={isLogin ? "Enter your password" : "Create a password (min 8 characters)"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    minLength={isLogin ? undefined : 8}
-                    className="transition-all duration-300 focus:shadow-medical"
-                  />
-                </div>
-                
-                {/* Confirm password for signup */}
-                {!isLogin && (
-                  <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">Confirm Password</Label>
-                    <Input
-                      id="confirmPassword"
-                      type="password"
-                      placeholder="Confirm your password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      required
-                      className="transition-all duration-300 focus:shadow-medical"
-                    />
-                  </div>
-                )}
-                
-                {/* Terms of Service for signup */}
-                {!isLogin && (
-                  <div className="text-xs text-muted-foreground text-center">
-                    By creating an account, you agree to our{" "}
-                    <Link to="#" className="text-primary hover:underline">Terms of Service</Link>{" "}
-                    and{" "}
-                    <Link to="#" className="text-primary hover:underline">Privacy Policy</Link>
-                  </div>
                 )}
                 
                 <Button 

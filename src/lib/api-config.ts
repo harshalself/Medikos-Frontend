@@ -27,8 +27,13 @@ export const API_ENDPOINTS = {
   auth: {
     login: '/api/auth/login',
     signup: '/api/auth/signup',
+    me: '/api/auth/me',
     profile: '/api/auth/profile',
+    resetPassword: '/api/auth/reset-password',
+    updatePassword: '/api/auth/update-password',
     logout: '/api/auth/logout',
+    protected: '/api/auth/protected',
+    doctorPatients: '/api/auth/doctor/patients',
   },
   healthPassport: {
     base: '/api/health-passport',

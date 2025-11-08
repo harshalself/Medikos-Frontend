@@ -6,7 +6,6 @@ import { useToast } from "@/hooks/use-toast";
 import { 
   MessageCircle, 
   X, 
-  Maximize2,
   Send,
   Bot,
   AlertTriangle,
@@ -168,11 +167,6 @@ const FloatingChatBot = ({ isOpen, onClose }: FloatingChatBotProps) => {
     setTimeout(() => handleSendMessage(), 100);
   };
 
-  const handleFullscreen = () => {
-    onClose();
-    navigate("/chatbot");
-  };
-
   const getMessageIcon = (type?: string) => {
     switch (type) {
       case 'warning': return <AlertTriangle className="w-3 h-3 text-orange-500" />;
@@ -205,15 +199,6 @@ const FloatingChatBot = ({ isOpen, onClose }: FloatingChatBotProps) => {
               </div>
             </div>
             <div className="flex items-center gap-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleFullscreen}
-                className="text-white hover:bg-white/20 w-8 h-8 p-0"
-                title="Open in full screen"
-              >
-                <Maximize2 className="w-4 h-4" />
-              </Button>
               <Button
                 variant="ghost"
                 size="sm"

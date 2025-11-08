@@ -61,12 +61,34 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
-  role: 'patient' | 'doctor' | 'admin';
+  role: 'patient' | 'doctor';
   profileImage?: string;
   phone?: string;
   dateOfBirth?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+// ============================================
+// Doctor Patients API Types
+// ============================================
+
+export interface DoctorPatient {
+  id: string;
+  email: string;
+  role: 'patient' | 'doctor';
+  full_name: string;
+  phone?: string;
+  date_of_birth?: string;
+  gender?: 'male' | 'female' | 'other';
+  avatar_url?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DoctorPatientsResponse {
+  patients: DoctorPatient[];
+  total_count: number;
 }
 
 // ============================================
@@ -290,34 +312,6 @@ export interface DiseasePredictionResponse {
     recommendedTests?: string[];
   }[];
   disclaimer: string;
-}
-
-// ============================================
-// Admin Types
-// ============================================
-
-export interface DashboardStats {
-  totalPatients: number;
-  totalDoctors: number;
-  totalAppointments: number;
-  todayAppointments: number;
-  revenue?: number;
-  activeUsers: number;
-}
-
-export interface AnalyticsData {
-  appointmentTrends: {
-    date: string;
-    count: number;
-  }[];
-  patientGrowth: {
-    month: string;
-    count: number;
-  }[];
-  topDoctors: {
-    doctor: Doctor;
-    appointmentCount: number;
-  }[];
 }
 
 // ============================================

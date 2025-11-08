@@ -189,58 +189,13 @@ export const Sidebar = ({ userRole, onLogout, isCollapsed, onToggle }: SidebarPr
       bgColor: "bg-orange-50 hover:bg-orange-100",
       gradient: "from-orange-400 to-orange-600"
     },
-    { 
-      path: "/chatbot", 
-      label: "AI Assistant", 
-      icon: MessageCircle,
-      iconColor: "text-blue-500",
-      bgColor: "bg-blue-50 hover:bg-blue-100",
-      gradient: "from-blue-400 to-blue-600"
-    },
-  ];
-
-  const adminLinks: NavLink[] = [
-    { 
-      path: "/admin-dashboard", 
-      label: "Dashboard", 
-      icon: LayoutDashboard,
-      iconColor: "text-blue-500",
-      bgColor: "bg-blue-50 hover:bg-blue-100",
-      gradient: "from-blue-400 to-blue-600"
-    },
-    { 
-      path: "/admin-dashboard", 
-      label: "User Management", 
-      icon: Users,
-      iconColor: "text-purple-500",
-      bgColor: "bg-purple-50 hover:bg-purple-100",
-      gradient: "from-purple-400 to-purple-600"
-    },
-    { 
-      path: "/admin-dashboard", 
-      label: "Analytics", 
-      icon: Activity,
-      iconColor: "text-green-500",
-      bgColor: "bg-green-50 hover:bg-green-100",
-      gradient: "from-green-400 to-green-600"
-    },
-    { 
-      path: "/admin-dashboard", 
-      label: "System Health", 
-      icon: Heart,
-      iconColor: "text-red-500",
-      bgColor: "bg-red-50 hover:bg-red-100",
-      gradient: "from-red-400 to-red-600"
-    },
   ];
 
   const links = 
-    userRole === "admin" ? adminLinks :
     userRole === "doctor" ? doctorLinks :
     patientLinks;
 
   const getAccentColor = () => {
-    if (userRole === "admin") return "bg-orange-500";
     if (userRole === "doctor") return "bg-blue-500";
     return "bg-teal-500";
   };
@@ -250,7 +205,7 @@ export const Sidebar = ({ userRole, onLogout, isCollapsed, onToggle }: SidebarPr
       {/* Hamburger Menu Button - Fixed position, always visible */}
       <button
         onClick={onToggle}
-        className="fixed top-4 left-4 z-50 p-2 bg-white border border-border rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+        className="fixed top-4 left-4 z-50 p-2 bg-white/80 backdrop-blur-sm border-0 rounded-lg hover:bg-white/90 transition-all duration-300 hover:scale-105"
         aria-label="Toggle sidebar"
       >
         {isCollapsed ? (

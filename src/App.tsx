@@ -15,11 +15,9 @@ import DoctorDiagnosis from "./pages/DoctorDiagnosis";
 import DoctorConsultations from "./pages/DoctorConsultations";
 import DoctorAnalytics from "./pages/DoctorAnalytics";
 import PatientDetails from "./pages/PatientDetails";
-import AdminDashboard from "./pages/AdminDashboard";
 import Remedies from "./pages/Remedies";
 import MediVault from "./pages/MediVault";
 import HealthPassport from "./pages/HealthPassport";
-import ChatBot from "./pages/ChatBot";
 import GenericMedicine from "./pages/GenericMedicine";
 import InfectiousDiseasePrediction from "./pages/InfectiousDiseasePrediction";
 import HealthDiary from "./pages/HealthDiary";
@@ -50,14 +48,12 @@ const App = () => (
             <Route path="/doctor/consultations" element={<ProtectedRoute><DoctorConsultations /></ProtectedRoute>} />
             <Route path="/doctor/analytics" element={<ProtectedRoute><DoctorAnalytics /></ProtectedRoute>} />
             
-            <Route path="/admin-dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
             <Route path="/remedies" element={<ProtectedRoute><Remedies /></ProtectedRoute>} />
             <Route path="/medivault" element={<ProtectedRoute><MediVault /></ProtectedRoute>} />
             <Route path="/passport" element={<ProtectedRoute><HealthPassport /></ProtectedRoute>} />
             <Route path="/generic-medicine" element={<ProtectedRoute><GenericMedicine /></ProtectedRoute>} />
             <Route path="/disease-prediction" element={<ProtectedRoute><InfectiousDiseasePrediction /></ProtectedRoute>} />
             <Route path="/health-diary" element={<ProtectedRoute><HealthDiary /></ProtectedRoute>} />
-            <Route path="/chatbot" element={<ProtectedRoute><ChatBot /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />

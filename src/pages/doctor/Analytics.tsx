@@ -69,7 +69,9 @@ const Analytics = () => {
   ];
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+         style={{ paddingLeft: 'max(1.5rem, calc(50vw - 896px + 1.5rem + 80px))' }}>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Analytics & Reports</h2>
         <div className="flex gap-3">
@@ -442,6 +444,7 @@ const Analytics = () => {
         </TabsContent>
       </Tabs>
     </motion.div>
+    </div>
   );
 };
 

@@ -19,8 +19,8 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (email: string, password: string, role: UserRole) => Promise<void>;
-  signup: (email: string, password: string, fullName: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
+  signup: (email: string, password: string, fullName: string, role: UserRole, phone: string, dateOfBirth: string, gender: string) => Promise<void>;
   logout: () => Promise<void>;
   error: string | null;
   clearError: () => void;
@@ -60,41 +60,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     initAuth();
   }, []);
 
-  const login = async (email: string, password: string, role: UserRole) => {
+  const login = async (email: string, password: string) => {
     setIsLoading(true);
     setError(null);
     
     try {
-      // Backend doesn't handle roles - send only email and password
+      // Backend manages roles - just send email and password
       const response = await api.post<{
         message: string;
         user: {
           id: string;
           email: string;
-          user_metadata?: {
-            full_name?: string;
-          };
-          app_metadata?: any;
-          created_at: string;
+          role: string;
+          full_name: string;
         };
         session: {
           access_token: string;
-          refresh_token?: string;
-          expires_at: number;
+          token_type: string;
         };
       }>(API_ENDPOINTS.auth.login, { email, password });
 
       // Store tokens
       localStorage.setItem("auth_token", response.session.access_token);
-      if (response.session.refresh_token) {
-        localStorage.setItem("refresh_token", response.session.refresh_token);
-      }
 
-      // Set user data with role from frontend selection (backend doesn't handle roles)
-      const fullName = response.user.user_metadata?.full_name;
+      // Use role from backend response (backend manages roles now)
+      const backendRole = response.user.role?.toLowerCase() as UserRole;
+      const fullName = response.user.full_name;
       
       // Store user data for session restoration
-      localStorage.setItem("user_role", role);
+      localStorage.setItem("user_role", backendRole);
       localStorage.setItem("user_email", response.user.email);
       localStorage.setItem("user_name", fullName || "");
       
@@ -102,14 +96,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         id: response.user.id,
         name: fullName || email.split("@")[0],
         email: response.user.email,
-        role: role, // Use the role selected in frontend
+        role: backendRole, // Use the role from backend
         firstName: fullName,
         lastName: "",
       });
 
       toast({
         title: "Login Successful!",
-        description: `Welcome back, ${role === "doctor" ? "Doctor" : "Patient"}!`,
+        description: `Welcome back, ${backendRole === "doctor" ? "Doctor" : "Patient"}!`,
       });
 
     } catch (err) {
@@ -140,43 +134,61 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const signup = async (email: string, password: string, userFullName: string) => {
+  const signup = async (email: string, password: string, userFullName: string, role: UserRole, phone: string, dateOfBirth: string, gender: string) => {
     setIsLoading(true);
     setError(null);
     
     try {
+      // Backend signup now accepts role parameter
       const response = await api.post<{
         message: string;
         user: {
           id: string;
           email: string;
-          user_metadata?: {
-            full_name?: string;
-          };
-          app_metadata?: any;
+          role: string;
+          full_name: string;
           created_at: string;
         };
         session: {
           access_token: string;
-          refresh_token?: string;
-          expires_at: number;
+          token_type: string;
         };
-      }>(API_ENDPOINTS.auth.signup, { email, password, full_name: userFullName });
+      }>(API_ENDPOINTS.auth.signup, { 
+        email, 
+        password, 
+        full_name: userFullName,
+        role: role // Backend now accepts role parameter
+      });
 
       // Store tokens
       localStorage.setItem("auth_token", response.session.access_token);
-      if (response.session.refresh_token) {
-        localStorage.setItem("refresh_token", response.session.refresh_token);
+
+      // Update profile with additional information
+      try {
+        await api.put(API_ENDPOINTS.auth.profile, {
+          phone: phone,
+          date_of_birth: dateOfBirth,
+          gender: gender
+        });
+      } catch (profileError) {
+        console.warn("Profile update failed after signup:", profileError);
+        // Don't fail signup if profile update fails
       }
 
-      // Set user data - new users don't have a role yet, so we'll set a default
-      // The role will be determined by frontend selection during login
-      const fullName = response.user.user_metadata?.full_name;
+      // Use role from backend response (backend should respect the role we sent)
+      const backendRole = response.user.role?.toLowerCase() as UserRole;
+      const fullName = response.user.full_name;
+      
+      // Store user data for session restoration
+      localStorage.setItem("user_role", backendRole);
+      localStorage.setItem("user_email", response.user.email);
+      localStorage.setItem("user_name", fullName || "");
+      
       setUser({
         id: response.user.id,
         name: fullName || email.split("@")[0],
         email: response.user.email,
-        role: "patient", // Default role for new users
+        role: backendRole, // Use the role from backend
         firstName: fullName,
         lastName: "",
       });

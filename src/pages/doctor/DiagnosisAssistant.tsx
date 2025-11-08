@@ -85,7 +85,9 @@ const DiagnosisAssistant = () => {
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+         style={{ paddingLeft: 'max(1.5rem, calc(50vw - 896px + 1.5rem + 80px))' }}>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
       <div className="flex items-center gap-3 mb-6">
         <Brain className="w-8 h-8 text-blue-500" />
         <h2 className="text-2xl font-bold">AI Diagnosis Assistant</h2>
@@ -271,6 +273,7 @@ const DiagnosisAssistant = () => {
         </Card>
       </div>
     </motion.div>
+    </div>
   );
 };
 
